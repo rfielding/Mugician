@@ -26,6 +26,7 @@ static AudioOutput* lastAudio;
 static float gainp=0.5;
 static float reverbp=0.5;
 static float NoteStates[NOTECOUNT];
+static float MicroStates[NOTECOUNT];
 
 double GetFrequencyForNote(double note) {
 	return kMiddleAFrequency * pow(2, (note - kMiddleANote) / kNotesPerOctave);
@@ -59,6 +60,7 @@ void ButtonStatesInit()
 	for(int i=0;i<NOTECOUNT;i++)
 	{
 		NoteStates[i]=0;
+		MicroStates[i]=0;
 	}
 }
 
@@ -75,12 +77,29 @@ void ButtonsTrack()
 			{
 				CGPoint point = [touch locationInView:lastTouchesView];
 				//Find the square we are in, and enable it
-				int i = (SPLITCOUNT * point.x)/backingWidth;
+				float ifl = (1.0*SPLITCOUNT * point.x)/backingWidth;
+				int i = (int)ifl;
+				float di = ifl-i;
 				int j = SPLITCOUNT-(SPLITCOUNT * point.y)/backingHeight;
 				int n = (5*j+i)%12;
 				if((i>4||j>0) && 0<=n && n<NOTECOUNT)
 				{
-					NoteStates[n] = (1+3*NoteStates[n])/4;
+					if(di < 0.25)
+					{
+						//quarterflat
+						MicroStates[n] = (1+3*MicroStates[n])/4;
+					}
+					else
+					if(0.75 < di) 
+					{
+						//quartersharp
+						MicroStates[(n+1)%NOTECOUNT] = (1+3*MicroStates[(n+1)%NOTECOUNT])/4;
+					}
+					else
+					{
+						//on note
+						NoteStates[n] = (1+3*NoteStates[n])/4;
+					}
 				}
 			}
 		}
@@ -89,6 +108,7 @@ void ButtonsTrack()
 	for(int n=0;n<NOTECOUNT;n++)
 	{
 		NoteStates[n] *= 0.99;
+		MicroStates[n] *= 0.99;
 	}
 }
 
@@ -173,6 +193,27 @@ void ButtonRender(int i,int j,float hilite)
 	Vertices2Render(GL_TRIANGLES);
 }
 
+void MicroButtonRender(int i,int j,float hilite)
+{
+	GLfloat f = 1.0/SPLITCOUNT;
+	GLfloat l = 2*((i-0.1)*f-0.5);
+	GLfloat r = 2*((i+0.1)*f-0.5);
+	GLfloat t = 2*((j+0.75)*f-0.5);
+	GLfloat b = 2*((j+0.25)*f-0.5);
+	GLfloat h = 75*hilite;
+	GLfloat cr = 255;
+	GLfloat cg = 0;
+	GLfloat cb = 0;
+	Vertices2Clear();
+	Vertices2Insert(l,t,cr,cg,cb,h);
+	Vertices2Insert(r,t,cr,cg,cb,h);
+	Vertices2Insert(l,b,cr,cg,cb,h);
+	Vertices2Insert(l,b,cr,cg,cb,h);
+	Vertices2Insert(r,t,cr,cg,cb,h);
+	Vertices2Insert(r,b,cr,cg,cb,h);
+	Vertices2Render(GL_TRIANGLES);
+}
+
 void ButtonsRender()
 {
 	for(int j=0;j<SPLITCOUNT;j++)
@@ -180,6 +221,18 @@ void ButtonsRender()
 		for(int i=0;i<SPLITCOUNT;i++)
 		{
 			ButtonRender(i,j,NoteStates[(5*j+i)%12]);
+		}
+	}
+}
+
+void MicroButtonsRender()
+{
+	for(int j=0;j<SPLITCOUNT;j++)
+	{
+		//Note that we are over by 1
+		for(int i=0;i<SPLITCOUNT+1;i++)
+		{
+			MicroButtonRender(i,j,MicroStates[(5*j+i)%12]);
 		}
 	}
 }
@@ -395,6 +448,7 @@ void DisableFingers()
 #endif
 	
 	ButtonsRender();
+	MicroButtonsRender();	
 	ButtonsTrack();
 	LinesRender();
 	ControlRender();

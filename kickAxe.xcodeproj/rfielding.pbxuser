@@ -675,7 +675,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15591;
+		rLoc = 16768;
 		rType = 0;
 		vrLen = 1192;
 		vrLoc = 13948;
@@ -685,7 +685,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7375;
+		rLoc = 7377;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 0;
@@ -715,7 +715,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15591;
+		rLoc = 16768;
 		rType = 0;
 		vrLen = 1215;
 		vrLoc = 13948;
@@ -725,7 +725,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15591;
+		rLoc = 16768;
 		rType = 0;
 		vrLen = 1170;
 		vrLoc = 13993;
@@ -735,7 +735,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7375;
+		rLoc = 7377;
 		rType = 0;
 		vrLen = 989;
 		vrLoc = 0;
@@ -765,7 +765,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15591;
+		rLoc = 16768;
 		rType = 0;
 		vrLen = 1168;
 		vrLoc = 13993;
@@ -775,7 +775,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7375;
+		rLoc = 7377;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 0;
