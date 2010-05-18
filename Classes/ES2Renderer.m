@@ -78,7 +78,7 @@ void ButtonsTrack()
 				int i = (SPLITCOUNT * point.x)/backingWidth;
 				int j = SPLITCOUNT-(SPLITCOUNT * point.y)/backingHeight;
 				int n = (5*j+i)%12;
-				if(i>4||j>0)
+				if((i>4||j>0) && 0<=n && n<NOTECOUNT)
 				{
 					NoteStates[n] = (1+3*NoteStates[n])/4;
 				}

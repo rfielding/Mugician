@@ -32,9 +32,9 @@
 	};
 	2514C27010084DB100A42282 /* ES2Renderer.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {831, 8086}}";
-			sepNavSelRange = "{15566, 0}";
-			sepNavVisRange = "{13948, 1215}";
+			sepNavIntBoundsRect = "{{0, 0}, {831, 8294}}";
+			sepNavSelRange = "{515, 0}";
+			sepNavVisRange = "{2785, 701}";
 			sepNavWindowFrame = "{{598, 152}, {890, 700}}";
 		};
 	};
@@ -675,7 +675,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15566;
+		rLoc = 15591;
 		rType = 0;
 		vrLen = 1192;
 		vrLoc = 13948;
@@ -685,7 +685,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7102;
+		rLoc = 7375;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 0;
@@ -705,7 +705,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 108";
 		rLen = 0;
-		rLoc = 3112;
+		rLoc = 3385;
 		rType = 0;
 		vrLen = 1465;
 		vrLoc = 2231;
@@ -715,7 +715,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15566;
+		rLoc = 15591;
 		rType = 0;
 		vrLen = 1215;
 		vrLoc = 13948;
@@ -725,7 +725,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15566;
+		rLoc = 15591;
 		rType = 0;
 		vrLen = 1170;
 		vrLoc = 13993;
@@ -735,7 +735,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7102;
+		rLoc = 7375;
 		rType = 0;
 		vrLen = 989;
 		vrLoc = 0;
@@ -745,7 +745,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 91";
 		rLen = 0;
-		rLoc = 2572;
+		rLoc = 2845;
 		rType = 0;
 		vrLen = 653;
 		vrLoc = 5795;
@@ -765,7 +765,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 15566;
+		rLoc = 15591;
 		rType = 0;
 		vrLen = 1168;
 		vrLoc = 13993;
@@ -775,7 +775,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7102;
+		rLoc = 7375;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 0;
