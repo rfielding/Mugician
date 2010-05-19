@@ -87,18 +87,18 @@ void ButtonsTrack()
 					if(di < 0.25)
 					{
 						//quarterflat
-						MicroStates[n] = (1+3*MicroStates[n])/4;
+						MicroStates[n] = (1+7*MicroStates[n])/8;
 					}
 					else
 					if(0.75 < di) 
 					{
 						//quartersharp
-						MicroStates[(n+1)%NOTECOUNT] = (1+3*MicroStates[(n+1)%NOTECOUNT])/4;
+						MicroStates[(n+1)%NOTECOUNT] = (1+7*MicroStates[(n+1)%NOTECOUNT])/8;
 					}
 					else
 					{
 						//on note
-						NoteStates[n] = (1+3*NoteStates[n])/4;
+						NoteStates[n] = (1+7*NoteStates[n])/8;
 					}
 				}
 			}
@@ -107,8 +107,8 @@ void ButtonsTrack()
 	//Fade all notes
 	for(int n=0;n<NOTECOUNT;n++)
 	{
-		NoteStates[n] *= 0.99;
-		MicroStates[n] *= 0.99;
+		NoteStates[n] *= 0.995;
+		MicroStates[n] *= 0.995;
 	}
 }
 
@@ -193,16 +193,37 @@ void ButtonRender(int i,int j,float hilite)
 	Vertices2Render(GL_TRIANGLES);
 }
 
-void MicroButtonRender(int i,int j,float hilite)
+void MicroRedButtonRender(int i,int j,float hilite)
 {
 	GLfloat f = 1.0/SPLITCOUNT;
 	GLfloat l = 2*((i-0.1)*f-0.5);
 	GLfloat r = 2*((i+0.1)*f-0.5);
-	GLfloat t = 2*((j+0.75)*f-0.5);
-	GLfloat b = 2*((j+0.25)*f-0.5);
-	GLfloat h = 75*hilite;
+	GLfloat t = 2*((j+0.5+0.1)*f-0.5);
+	GLfloat b = 2*((j+0.5-0.1)*f-0.5);
+	GLfloat h = 200*hilite;
 	GLfloat cr = 255;
 	GLfloat cg = 0;
+	GLfloat cb = 0;
+	Vertices2Clear();
+	Vertices2Insert(l,t,cr,cg,cb,h);
+	Vertices2Insert(r,t,cr,cg,cb,h);
+	Vertices2Insert(l,b,cr,cg,cb,h);
+	Vertices2Insert(l,b,cr,cg,cb,h);
+	Vertices2Insert(r,t,cr,cg,cb,h);
+	Vertices2Insert(r,b,cr,cg,cb,h);
+	Vertices2Render(GL_TRIANGLES);
+}
+
+void MicroGreenButtonRender(int i,int j,float hilite)
+{
+	GLfloat f = 1.0/SPLITCOUNT;
+	GLfloat l = 2*((i-0.1+0.5)*f-0.5);
+	GLfloat r = 2*((i+0.1+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+0.1)*f-0.5);
+	GLfloat b = 2*((j+0.5-0.1)*f-0.5);
+	GLfloat h = 200*hilite;
+	GLfloat cr = 0;
+	GLfloat cg = 255;
 	GLfloat cb = 0;
 	Vertices2Clear();
 	Vertices2Insert(l,t,cr,cg,cb,h);
@@ -221,6 +242,7 @@ void ButtonsRender()
 		for(int i=0;i<SPLITCOUNT;i++)
 		{
 			ButtonRender(i,j,NoteStates[(5*j+i)%12]);
+			//MicroGreenButtonRender(i,j,NoteStates[(5*j+i)%12]);
 		}
 	}
 }
@@ -232,7 +254,7 @@ void MicroButtonsRender()
 		//Note that we are over by 1
 		for(int i=0;i<SPLITCOUNT+1;i++)
 		{
-			MicroButtonRender(i,j,MicroStates[(5*j+i)%12]);
+			MicroRedButtonRender(i,j,MicroStates[(5*j+i)%12]);
 		}
 	}
 }
