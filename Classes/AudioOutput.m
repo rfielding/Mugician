@@ -51,6 +51,28 @@ static int echoN(int i,float v)
 	return r;
 }
 
+//Just do a flat limit so that we can crank the volume
+static SInt32 limiter(float inval)
+{
+	if(inval > 0xEFFFFFFE)
+	{
+		return 0xEFFFFFFE;
+	}
+	else 
+	{
+		if(inval > -0xEFFFFFFE)
+		{
+			return -0xEFFFFFFE;
+		}
+		else 
+		{
+			return (SInt32)inval;
+		}
+
+	}
+
+}
+
 static OSStatus makeNoise(AudioBufferList* buffers)
 {
 	AudioBuffer* outputBuffer = &buffers->mBuffers[0];
@@ -124,29 +146,30 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	}
 	float unR = (1-reverbp);
 	float unG = (1-gainp);
-	float load = 2.2;
+	float load = 0x1000000 * 4;//5;
 	//If reverb is low, then turn it off for performance (ie: external recording)
 	if(reverbp > 0.04)
 	{
 		float p = 0.1;
 		float unP = 1-p;
 		for (int i = 0; i < samples; ++i) {
-			float distorted = (1.4*unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
+			float distorted = (unG*buffer[i]+gainp*atan(256*gainp*buffer[i]))/40;
 			int bi = echoN(i,distorted);
 			
 			//lowpass filter			
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-3)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-7)%ECHO_SIZE]-p*echoBuffer[bi];
+			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-11)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-13)%ECHO_SIZE]-p*echoBuffer[bi];
-			data[i] = 0x1000000*1.05*atan((reverbp*echoBuffer[bi] + unR*distorted)*load);
+			data[i] = limiter((reverbp*echoBuffer[bi] + unR*distorted)*load);
 			echoBuffer[bi] *= reverbp*0.125;
 		}
 	}
 	else 
 	{
 		for (int i = 0; i < samples; ++i) {
-			float distorted = (1.4*unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
-			data[i] = 0x1000000*1.05*atan(distorted*load);
+			float distorted = (unG*buffer[i]+gainp*atan(256*gainp*buffer[i]))/40;
+			data[i] = limiter(distorted*load);
 		}
 	}
 

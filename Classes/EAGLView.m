@@ -6,6 +6,10 @@
 //  Copyright Check Point Software 2010. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
+#import <CoreAudio/CoreAudioTypes.h>
+
+
 #import "EAGLView.h"
 
 #import "ES2Renderer.h"
@@ -26,6 +30,10 @@
 //The EAGL view is stored in the nib file. When it's unarchived it's sent -initWithCoder:
 - (id)initWithCoder:(NSCoder*)coder
 {    
+	NSError* asError = nil;
+	AVAudioSession* session = [AVAudioSession sharedInstance];
+	[session setCategory:AVAudioSessionCategoryAmbient error:&asError];
+	
     if ((self = [super initWithCoder:coder]))
     {
         // Get the layer

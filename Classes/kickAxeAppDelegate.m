@@ -35,6 +35,7 @@
 	
     [aViewController release];
 	
+	
 	[glView startAnimation];
     return YES;
 }
