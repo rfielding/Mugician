@@ -76,6 +76,12 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			float gInv = 1-g;
 			float unGainp = 1-gainp;
 			
+			//If we are turning on a note, then don't lpfilter vol and harmonics
+			if(currentVol[j] < 0.01)
+			{
+				pitch[j] = targetPitch[j]; 
+				harmonicPercentage[j] = harm;
+			}
 			//CODE DUPLICATION... conceptually should call a fn when
 			// not doing lowpass filter to do attack changes
 			if(attackSamples < samples)
@@ -92,8 +98,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 					//lopass filter changes to prevent popping noises
 					pitch[j] = 0.9 * pitch[j] + 0.1 * targetPitch[j];
 					currentVol[j] = gInv * currentVol[j] + g * targetVol[j]; 
-					harmonicPercentage[j] = 0.9 * harm + 0.1 * harmonicPercentage[j];
-					harm = harmonicPercentage[j];
+					harm = 0.99 * harm + 0.01 * harmonicPercentage[j];
 				}
 			}
 			else 
@@ -119,18 +124,20 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	}
 	float unR = (1-reverbp);
 	float unG = (1-gainp);
-	float load = 2.5;
+	float load = 2.2;
 	//If reverb is low, then turn it off for performance (ie: external recording)
 	if(reverbp > 0.04)
 	{
-		float p = 0.0001;
+		float p = 0.1;
 		float unP = 1-p;
 		for (int i = 0; i < samples; ++i) {
 			float distorted = (1.4*unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
 			int bi = echoN(i,distorted);
 			
 			//lowpass filter			
-			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-512)%ECHO_SIZE]-p*echoBuffer[bi];
+			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-3)%ECHO_SIZE]-p*echoBuffer[bi];
+			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-7)%ECHO_SIZE]-p*echoBuffer[bi];
+			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-13)%ECHO_SIZE]-p*echoBuffer[bi];
 			data[i] = 0x1000000*1.05*atan((reverbp*echoBuffer[bi] + unR*distorted)*load);
 			echoBuffer[bi] *= reverbp*0.125;
 		}
