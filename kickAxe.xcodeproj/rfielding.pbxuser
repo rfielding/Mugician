@@ -34,7 +34,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {831, 9386}}";
 			sepNavSelRange = "{1930, 0}";
-			sepNavVisRange = "{1931, 988}";
+			sepNavVisRange = "{1931, 1011}";
 			sepNavWindowFrame = "{{598, 152}, {890, 700}}";
 		};
 	};
@@ -441,6 +441,12 @@
 		sourceTree = "<absolute>";
 	};
 	490882211179416700D8FBD6 /* AudioOutput.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = AudioOutput.h;
+		path = "/Users/rfielding/tmp/mobilesynth-read-only/mobilesynth/AudioOutput.h";
+		sourceTree = "<absolute>";
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {432, 336}}";
 			sepNavSelRange = "{87, 0}";
@@ -449,10 +455,16 @@
 		};
 	};
 	490882221179416700D8FBD6 /* AudioOutput.m */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.objc;
+		name = AudioOutput.m;
+		path = "/Users/rfielding/tmp/mobilesynth-read-only/mobilesynth/AudioOutput.m";
+		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {628, 3809}}";
-			sepNavSelRange = "{772, 0}";
-			sepNavVisRange = "{1931, 1019}";
+			sepNavIntBoundsRect = "{{0, 0}, {656, 3822}}";
+			sepNavSelRange = "{3942, 0}";
+			sepNavVisRange = "{1798, 1166}";
 			sepNavWindowFrame = "{{271, 139}, {890, 700}}";
 		};
 	};
@@ -696,7 +708,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7832;
+		rLoc = 7907;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 0;
@@ -716,7 +728,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 108";
 		rLen = 0;
-		rLoc = 3827;
+		rLoc = 3909;
 		rType = 0;
 		vrLen = 1465;
 		vrLoc = 2231;
@@ -816,7 +828,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 65";
 		rLen = 0;
-		rLoc = 1841;
+		rLoc = 1922;
 		rType = 0;
 		vrLen = 1355;
 		vrLoc = 1346;
@@ -856,7 +868,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7832;
+		rLoc = 7907;
 		rType = 0;
 		vrLen = 989;
 		vrLoc = 0;
@@ -866,7 +878,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 91";
 		rLen = 0;
-		rLoc = 3261;
+		rLoc = 3342;
 		rType = 0;
 		vrLen = 653;
 		vrLoc = 5795;
@@ -896,7 +908,7 @@
 		fRef = 490882221179416700D8FBD6 /* AudioOutput.m */;
 		name = "AudioOutput.m: 279";
 		rLen = 0;
-		rLoc = 7832;
+		rLoc = 7907;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 0;

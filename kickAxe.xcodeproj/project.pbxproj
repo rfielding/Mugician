@@ -19,8 +19,8 @@
 		28FD15000DC6FC520079059D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD14FF0DC6FC520079059D /* OpenGLES.framework */; };
 		28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
 		490881CF1174001800D8FBD6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 490881CE1174001800D8FBD6 /* AudioToolbox.framework */; };
-		490882231179416700D8FBD6 /* AudioOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 490882221179416700D8FBD6 /* AudioOutput.m */; };
 		4928A602119BD77100322CCC /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4928A601119BD77100322CCC /* Entitlements.plist */; };
+		4955249A11A38BF80094D445 /* AudioOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 4955249911A38BF80094D445 /* AudioOutput.m */; };
 		49CC5E8F1198FADE0082519F /* MyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CC5E8D1198FADE0082519F /* MyViewController.m */; };
 		49CC5E901198FADE0082519F /* MyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49CC5E8E1198FADE0082519F /* MyViewController.xib */; };
 		49E3E5F91195223500F38DDB /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 49E3E5F81195223500F38DDB /* icon.png */; };
@@ -45,11 +45,11 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* kickAxe_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kickAxe_Prefix.pch; sourceTree = "<group>"; };
 		490881CE1174001800D8FBD6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		490882211179416700D8FBD6 /* AudioOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioOutput.h; path = "../../tmp/mobilesynth-read-only/mobilesynth/AudioOutput.h"; sourceTree = SOURCE_ROOT; };
-		490882221179416700D8FBD6 /* AudioOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioOutput.m; path = "../../tmp/mobilesynth-read-only/mobilesynth/AudioOutput.m"; sourceTree = SOURCE_ROOT; };
 		4928A57E119BCFD900322CCC /* screwed-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "screwed-Info.plist"; sourceTree = "<group>"; };
 		4928A5EB119BD59F00322CCC /* screwed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = screwed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4928A601119BD77100322CCC /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
+		4955249811A38BF80094D445 /* AudioOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioOutput.h; sourceTree = "<group>"; };
+		4955249911A38BF80094D445 /* AudioOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioOutput.m; sourceTree = "<group>"; };
 		49CC5E8C1198FADE0082519F /* MyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyViewController.h; sourceTree = "<group>"; };
 		49CC5E8D1198FADE0082519F /* MyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyViewController.m; sourceTree = "<group>"; };
 		49CC5E8E1198FADE0082519F /* MyViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyViewController.xib; sourceTree = "<group>"; };
@@ -83,8 +83,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				490882211179416700D8FBD6 /* AudioOutput.h */,
-				490882221179416700D8FBD6 /* AudioOutput.m */,
+				4955249811A38BF80094D445 /* AudioOutput.h */,
+				4955249911A38BF80094D445 /* AudioOutput.m */,
 				2514C26F10084DB100A42282 /* ES2Renderer.h */,
 				2514C27010084DB100A42282 /* ES2Renderer.m */,
 				2514C27110084DB100A42282 /* ESRenderer.h */,
@@ -250,8 +250,8 @@
 				1D3623260D0F684500981E51 /* kickAxeAppDelegate.m in Sources */,
 				28FD14FE0DC6FC130079059D /* EAGLView.m in Sources */,
 				2514C27310084DB100A42282 /* ES2Renderer.m in Sources */,
-				490882231179416700D8FBD6 /* AudioOutput.m in Sources */,
 				49CC5E8F1198FADE0082519F /* MyViewController.m in Sources */,
+				4955249A11A38BF80094D445 /* AudioOutput.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
