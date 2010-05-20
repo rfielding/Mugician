@@ -8,7 +8,6 @@
 @implementation AudioOutput
 
 #define UPPERLIMIT 214748367
-#define LOWERLIMIT -214748367
 
 static long totalSamples=0;
 static float gainp=0.5;
@@ -60,26 +59,26 @@ static int echoN(int i,float v)
 //Just do a flat limit so that we can crank the volume
 ///this limiter sucks....  need something without as much distortion
 ///as arctan, but smoother limiting
-static SInt32 limiter(float inval)
+static SInt32 limiter(float x)
 {
-	
-	if(inval > UPPERLIMIT)
+	/*
+	if(x > UPPERLIMIT)
 	{
 		return UPPERLIMIT;
 	}
 	else 
 	{
-		if(inval < LOWERLIMIT)
+		if(x < LOWERLIMIT)
 		{
 			return LOWERLIMIT;
 		}
 		else 
 		{
-			return (SInt32)inval;
+			return (SInt32)x;
 		}
-
 	}
-
+	 */
+	return UPPERLIMIT*atan(x);
 }
 
 static OSStatus makeNoise(AudioBufferList* buffers)
@@ -122,9 +121,9 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 					//float harml2 = harml*0.5;	
 					float a = i*pitch[j]*samplePercentage + angle[j];
 					buffer[i] += currentVol[j]*sin( a );
-					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
+					buffer[i] += currentVol[j]*sin( a/2 ) * 4*powerp*harml;
 					//buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
-					buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
+					buffer[i] += currentVol[j]*sin( 2*a ) *4*powerp*(harm);
 					
 					//lopass filter changes to prevent popping noises
 					pitch[j] = 0.9 * pitch[j] + 0.1 * targetPitch[j];
@@ -155,7 +154,6 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	}
 	float unR = (1-reverbp);
 	float unG = (1-gainp);
-	float load = 0x1000000 * 16;//5;
 	//If reverb is low, then turn it off for performance (ie: external recording)
 	if(reverbp > 0.04)
 	{
@@ -170,7 +168,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-7)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-11)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-13)%ECHO_SIZE]-p*echoBuffer[bi];
-			data[i] = limiter(masterp*(reverbp*echoBuffer[bi] + unR*distorted)*load);
+			data[i] = limiter(masterp*(reverbp*echoBuffer[bi] + unR*distorted));
 			echoBuffer[bi] *= reverbp*0.125;
 		}
 	}
@@ -178,7 +176,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	{
 		for (int i = 0; i < samples; ++i) {
 			float distorted = (unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
-			data[i] = limiter(masterp*distorted*load);
+			data[i] = limiter(masterp*distorted);
 		}
 	}
 

@@ -107,8 +107,8 @@ void ButtonsTrack()
 	//Fade all notes
 	for(int n=0;n<NOTECOUNT;n++)
 	{
-		NoteStates[n] *= 0.9925;
-		MicroStates[n] *= 0.9925;
+		NoteStates[n] *= 0.99;
+		MicroStates[n] *= 0.99;
 	}
 }
 
@@ -716,6 +716,8 @@ void DisableFingers()
 	lastTouches = touches;
 	lastTouchesView = v;
 //	somethingChanged = true;
+	ButtonsTrack();
+
 }
 
 - (void)touchesMoved:(NSSet*)touches atView:(UIView*)v
@@ -723,6 +725,7 @@ void DisableFingers()
 	lastTouches = touches;
 	lastTouchesView = v;
 //	somethingChanged = true;
+	ButtonsTrack();
 }
 
 - (void)touchesEnded:(NSSet*)touches atView:(UIView*)v
@@ -730,6 +733,7 @@ void DisableFingers()
 	lastTouches = touches;
 	lastTouchesView = v;
 //	somethingChanged = true;
+	ButtonsTrack();
 }
 
 @end

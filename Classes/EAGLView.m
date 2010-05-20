@@ -92,7 +92,7 @@
     // frame interval setting of one will fire 60 times a second when the display refreshes
     // at 60 times a second. A frame interval setting of less than one results in undefined
     // behavior.
-    if (frameInterval >= 2)
+    if (frameInterval >= 8)
     {
         animationFrameInterval = frameInterval;
 
