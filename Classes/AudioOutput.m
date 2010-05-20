@@ -121,9 +121,9 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 					//float harml2 = harml*0.5;	
 					float a = i*pitch[j]*samplePercentage + angle[j];
 					buffer[i] += currentVol[j]*sin( a );
-					buffer[i] += currentVol[j]*sin( a/2 ) * 4*powerp*harml;
+					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
 					//buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
-					buffer[i] += currentVol[j]*sin( 2*a ) *4*powerp*(harm);
+					buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
 					
 					//lopass filter changes to prevent popping noises
 					pitch[j] = 0.9 * pitch[j] + 0.1 * targetPitch[j];

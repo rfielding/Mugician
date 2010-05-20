@@ -216,7 +216,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>4955264911A4E10E0094D445</string>
+						<string>4955267C11A4F0810094D445</string>
 						<key>history</key>
 						<array>
 							<string>49983B41119FA6E500223A8A</string>
@@ -373,7 +373,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>4955264811A4E10E0094D445</string>
+										<string>4955267B11A4F0810094D445</string>
 										<key>history</key>
 										<array>
 											<string>49087FBC1170070D00D8FBD6</string>
@@ -404,11 +404,11 @@
 											<string>495524E911A3C5C20094D445</string>
 											<string>495524EC11A3C5C20094D445</string>
 											<string>4955261B11A4D8220094D445</string>
-											<string>4955261C11A4D8220094D445</string>
-											<string>4955261D11A4D8220094D445</string>
 											<string>4955261E11A4D8220094D445</string>
 											<string>4955264611A4E10E0094D445</string>
-											<string>4955264711A4E10E0094D445</string>
+											<string>4955267811A4F0810094D445</string>
+											<string>4955267911A4F0810094D445</string>
+											<string>4955267A11A4F0810094D445</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -606,13 +606,14 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>4955267D11A4F0810094D445</string>
 		<string>4955250211A3C6640094D445</string>
 		<string>495523C111A216830094D445</string>
-		<string>4955239B119FAA560094D445</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>491E0D31116D4DD8003B7B47</string>
+		<string>4955239B119FAA560094D445</string>
 		<string>491F6C2A119F7B0C00598A83</string>
+		<string>1C78EAAD065D492600B07095</string>
+		<string>491E0D31116D4DD8003B7B47</string>
 		<string>/Users/rfielding/cocoa/kickAxe/kickAxe.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
