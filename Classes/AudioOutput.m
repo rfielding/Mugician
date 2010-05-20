@@ -7,9 +7,14 @@
 
 @implementation AudioOutput
 
+#define UPPERLIMIT 214748367
+#define LOWERLIMIT -214748367
+
 static long totalSamples=0;
 static float gainp=0.5;
 static float reverbp=0.5;
+static float masterp=0.25;
+static float powerp=0.5;
 static const double kSampleRate = 44100.0;
 static const int kOutputBus = 0;
 
@@ -51,18 +56,22 @@ static int echoN(int i,float v)
 	return r;
 }
 
+
 //Just do a flat limit so that we can crank the volume
+///this limiter sucks....  need something without as much distortion
+///as arctan, but smoother limiting
 static SInt32 limiter(float inval)
 {
-	if(inval > 0xEFFFFFFE)
+	
+	if(inval > UPPERLIMIT)
 	{
-		return 0xEFFFFFFE;
+		return UPPERLIMIT;
 	}
 	else 
 	{
-		if(inval > -0xEFFFFFFE)
+		if(inval < LOWERLIMIT)
 		{
-			return -0xEFFFFFFE;
+			return LOWERLIMIT;
 		}
 		else 
 		{
@@ -89,7 +98,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 		//just use volume and target volume to determine whether to write buffer
 		//if a note is down, the targetVol is greater than 1, and when it's up
 		//currentVol is exactly 0, so we don't have a float rounding issue here
-		if(currentVol[j] > 0.001 || targetVol[j] > 0.001)
+		if(currentVol[j] > 0.01 || targetVol[j] > 0.01)
 		{
 			float harm = lastHarmonicPercentage[j];
 			float samplePercentage = 1.0/samples;
@@ -110,17 +119,17 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			{
 				for (int i = 0; i < attackSamples; ++i) {				
 					float harml = (1-harm)*0.5;
-					float harml2 = harml*0.5;	
+					//float harml2 = harml*0.5;	
 					float a = i*pitch[j]*samplePercentage + angle[j];
 					buffer[i] += currentVol[j]*sin( a );
-					buffer[i] += currentVol[j]*sin( a/2 ) * harml;
-					buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
-					buffer[i] += currentVol[j]*sin( 2*a ) *2*(harm);
+					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
+					//buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
+					buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
 					
 					//lopass filter changes to prevent popping noises
 					pitch[j] = 0.9 * pitch[j] + 0.1 * targetPitch[j];
 					currentVol[j] = gInv * currentVol[j] + g * targetVol[j]; 
-					harm = 0.99 * harm + 0.01 * harmonicPercentage[j];
+					harm = (0.99 * harm + 0.01 * harmonicPercentage[j]);
 				}
 			}
 			else 
@@ -129,13 +138,13 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			}
 
 			float harml = (1-harm)*0.5;
-			float harml2 = harml*0.5;	
+			//float harml2 = harml*0.5;	
 			for (int i = attackSamples; i < samples; ++i) {				
 				float a = i*pitch[j]*samplePercentage + angle[j];
 				buffer[i] += currentVol[j]*sin( a );
-				buffer[i] += currentVol[j]*sin( a/2 ) * harml;
-				buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
-				buffer[i] += currentVol[j]*sin( 2*a ) *2*(harm);
+				buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
+				//buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
+				buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
 			}
 			
 			lastPitch[j] = pitch[j];
@@ -146,14 +155,14 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	}
 	float unR = (1-reverbp);
 	float unG = (1-gainp);
-	float load = 0x1000000 * 4;//5;
+	float load = 0x1000000 * 16;//5;
 	//If reverb is low, then turn it off for performance (ie: external recording)
 	if(reverbp > 0.04)
 	{
 		float p = 0.1;
 		float unP = 1-p;
 		for (int i = 0; i < samples; ++i) {
-			float distorted = (unG*buffer[i]+gainp*atan(256*gainp*buffer[i]))/40;
+			float distorted = (unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
 			int bi = echoN(i,distorted);
 			
 			//lowpass filter			
@@ -161,15 +170,15 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-7)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-11)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-13)%ECHO_SIZE]-p*echoBuffer[bi];
-			data[i] = limiter((reverbp*echoBuffer[bi] + unR*distorted)*load);
+			data[i] = limiter(masterp*(reverbp*echoBuffer[bi] + unR*distorted)*load);
 			echoBuffer[bi] *= reverbp*0.125;
 		}
 	}
 	else 
 	{
 		for (int i = 0; i < samples; ++i) {
-			float distorted = (unG*buffer[i]+gainp*atan(256*gainp*buffer[i]))/40;
-			data[i] = limiter(distorted*load);
+			float distorted = (unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
+			data[i] = limiter(masterp*distorted*load);
 		}
 	}
 
@@ -334,6 +343,15 @@ static OSStatus playCallback(void *inRefCon,
 	reverbp = r;
 }
 
+- (void) setMaster:(float)m
+{
+	masterp = m;
+}
+
+- (void) setPower:(float)w
+{
+	powerp = w;
+}
 
 @end
 

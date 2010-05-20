@@ -2,7 +2,7 @@
 #import <Foundation/Foundation.h>
 #import <AudioUnit/AUComponent.h>
 
-#define FINGERS 8
+#define FINGERS 10
 #define NUM_BUFFERS 4
 #define BUFFER_SIZE (1024)
 #define ECHO_BITS 16
@@ -21,4 +21,6 @@
 - (void) setHarmonics:(float)h forFinger:(int)f;
 - (void) setGain:(float)g;
 - (void) setReverb:(float)r;
+- (void) setMaster:(float)m;
+- (void) setPower:(float)w;
 @end

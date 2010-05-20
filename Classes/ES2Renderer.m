@@ -19,14 +19,14 @@ static const double kNotesPerOctave = 12.0;
 static const double kMiddleAFrequency = 440.0;
 static const double kMiddleANote = 48; //100; //24;//49;
 
+#define SLIDERCOUNT 4
 #define SPLITCOUNT 12
 static NSSet* lastTouches;
 static UIView* lastTouchesView;
 static AudioOutput* lastAudio;
-static float gainp=0.5;
-static float reverbp=0.5;
 static float NoteStates[NOTECOUNT];
 static float MicroStates[NOTECOUNT];
+static float SliderValues[SLIDERCOUNT];
 
 double GetFrequencyForNote(double note) {
 	return kMiddleAFrequency * pow(2, (note - kMiddleANote) / kNotesPerOctave);
@@ -107,8 +107,8 @@ void ButtonsTrack()
 	//Fade all notes
 	for(int n=0;n<NOTECOUNT;n++)
 	{
-		NoteStates[n] *= 0.995;
-		MicroStates[n] *= 0.995;
+		NoteStates[n] *= 0.9925;
+		MicroStates[n] *= 0.9925;
 	}
 }
 
@@ -280,53 +280,73 @@ void ControlRender()
 	GLfloat t = -1 + 2.0/SPLITCOUNT;
 	GLfloat b = -1;
 	GLfloat m = (r+l)/2;
-	GLfloat v = (l+((reverbp)/2)*(r-l));
-	GLfloat g = (l+(0.5+(gainp)/2)*(r-l));
+	//GLfloat v = (l+((reverbp)/2)*(r-l));
+	//GLfloat g = (l+(0.5+(gainp)/2)*(r-l));
 	GLfloat d = 0.01;
-	//Reverb blue slider
-	Vertices2Clear();
-	Vertices2Insert(l,t+d, 25,20, 250, 255);
-	Vertices2Insert(v,t+d, 25,20, 250, 255);
-	Vertices2Insert(l,b, 25,20, 50, 255);	
-	Vertices2Insert(v,b, 25,20, 50, 255);	
-	Vertices2Render(GL_TRIANGLE_STRIP);	
-	//Black area of reverb
-	Vertices2Clear();
-	Vertices2Insert(v,t, 25,25, 100, 255);
-	Vertices2Insert(m,t, 25,25, 100, 255);
-	Vertices2Insert(v,b, 25,25, 0, 255);	
-	Vertices2Insert(m,b, 25,25, 0, 255);	
-	Vertices2Render(GL_TRIANGLE_STRIP);
 	
-	//Gain red slider
-	Vertices2Clear();
-	Vertices2Insert(m,t+d, 250,20, 25, 255);
-	Vertices2Insert(g,t+d, 250,20, 20, 255);
-	Vertices2Insert(m,b, 50,20, 20, 255);	
-	Vertices2Insert(g,b, 50,20, 25, 255);	
-	Vertices2Render(GL_TRIANGLE_STRIP);
-	//gain black area
-	Vertices2Clear();
-	Vertices2Insert(g,t, 100,25, 25, 255);
-	Vertices2Insert(r,t, 100,25, 20, 255);
-	Vertices2Insert(g,b, 0,25, 20, 255);	
-	Vertices2Insert(r,b, 0,25, 25, 255);	
-	Vertices2Render(GL_TRIANGLE_STRIP);
-	
+	GLfloat begin = -1;
+	GLfloat end = -2.0/SPLITCOUNT;
+	int sliderCount=SLIDERCOUNT;
+	for(int slider=0; slider < sliderCount; slider++)
+	{
+		GLfloat sl = begin + slider * (end-begin) / sliderCount;
+		GLfloat sr = begin + (slider+1) * (end-begin) / sliderCount;
+		GLfloat sv = sl + SliderValues[slider]*(sr-sl);
+		
+		GLfloat cr = 0;
+		GLfloat cg = 0;
+		GLfloat cb = 0;
+		if(slider==0)
+		{
+			cg = 255;
+		}
+		if(slider==1)
+		{
+			cb = 255;
+		}
+		if(slider==2)
+		{
+			cr = 255;
+		}
+		if(slider==3)
+		{
+			cr = 127;
+			cb = 127;
+		}
+		GLfloat crd = cr * 0.5;
+		GLfloat cgd = cg * 0.5;
+		GLfloat cbd = cb * 0.5;
+		
+		Vertices2Clear();
+		Vertices2Insert(sv,t, crd,cgd, cbd, 255);
+		Vertices2Insert(sr,t, crd,cgd, cbd, 255);
+		Vertices2Insert(sv,b, crd*0.25,cgd*0.25, cbd*0.25, 255);	
+		Vertices2Insert(sr,b, crd*0.25,cgd*0.25, cbd*0.25, 255);	
+		Vertices2Render(GL_TRIANGLE_STRIP);	
+		
+		Vertices2Clear();
+		Vertices2Insert(sl,t+d, cr,cg, cb, 255);
+		Vertices2Insert(sv,t+d, cr,cg, cb, 255);
+		Vertices2Insert(sl,b, cr*0.25,cg*0.25, cb*0.25, 255);	
+		Vertices2Insert(sv,b, cr*0.25,cg*0.25, cb*0.25, 255);	
+		Vertices2Render(GL_TRIANGLE_STRIP);	
+	}
 }
 
 void FingerControl(float i,float j)
 {
-	if(i<2.5)
+	//Slidercontrol spans 5 slots
+	float sliderf = SLIDERCOUNT*i/5;
+	int slider = (int)sliderf;
+	float v = sliderf - slider;
+	//NSLog(@"%d:%f",slider,v);
+	switch(slider)
 	{
-		reverbp = i*40/100;
+		case 0: SliderValues[0]=v; [lastAudio setMaster: SliderValues[0]]; break;
+		case 1: SliderValues[1]=v; [lastAudio setReverb: SliderValues[1]]; break;
+		case 2: SliderValues[2]=v; [lastAudio setGain: SliderValues[2]]; break;
+		case 3: SliderValues[3]=v; [lastAudio setPower: SliderValues[3]]; break;
 	}
-	else
-	{
-		gainp = (i-2.5)*40/100;
-	}
-	[lastAudio setGain:gainp];
-	[lastAudio setReverb:reverbp];
 }
 
 void FingerRenderRaw2(float i,float j,GLfloat x,GLfloat y,CGFloat px,CGFloat py,int finger)
@@ -430,6 +450,12 @@ void DisableFingers()
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);		
     }
+	//MasterVol is 1/4 in beginning
+	SliderValues[0] = 0.25;
+	SliderValues[1] = 0.5;
+	SliderValues[2] = 0.5;
+	SliderValues[3] = 0.5;
+	
 	somethingChanged = true;
 	TouchesInit();
 	ButtonStatesInit();
