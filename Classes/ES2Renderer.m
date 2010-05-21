@@ -6,6 +6,8 @@
 //  Copyright Check Point Software 2010. All rights reserved.
 //
 
+#import <CoreGraphics/CoreGraphics.h>
+
 #import "ES2Renderer.h"
 
 #define NOTECOUNT 12
@@ -27,6 +29,9 @@ static AudioOutput* lastAudio;
 static float NoteStates[NOTECOUNT];
 static float MicroStates[NOTECOUNT];
 static float SliderValues[SLIDERCOUNT];
+
+static GLuint textures[1];
+
 
 double GetFrequencyForNote(double note) {
 	return kMiddleAFrequency * pow(2, (note - kMiddleANote) / kNotesPerOctave);
@@ -273,6 +278,19 @@ void LinesRender()
 	Vertices2Render(GL_LINES);
 }
 
+static const GLfloat vertices[4][3] = {
+	{-1.0,  1.0, -0.0},
+	{ 1.0,  1.0, -0.0},
+	{-1.0, -1.0, -0.0},
+	{ 1.0, -1.0, -0.0}
+};
+static const GLfloat texCoords[] = {
+	0.0, 1.0,
+	1.0, 1.0,
+	0.0, 0.0,
+	1.0, 0.0
+};
+
 void ControlOverlayRender()
 {
 	GLfloat l = -1;
@@ -284,16 +302,21 @@ void ControlOverlayRender()
 	GLfloat cg = 255;
 	GLfloat cb = 255;
 	GLfloat ca = 127;
-	/*
-	Vertices2Clear();
 	
-	Vertices2Insert(sl,t+d, cr,cg, cb, 255);
-	Vertices2Insert(sv,t+d, cr,cg, cb, 255);
-	Vertices2Insert(sl,b, cr*0.25,cg*0.25, cb*0.25, 255);	
-	Vertices2Insert(sv,b, cr*0.25,cg*0.25, cb*0.25, 255);	
-	
+/*
+    glEnableClientState(GL_VERTEX_ARRAY);	
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+	Vertices2Clear();	
+	Vertices2Insert(l,t, cr,cg, cb, ca);
+	Vertices2Insert(r,t, cr,cg, cb, ca);
+	Vertices2Insert(l,b, cr*0.25,cg*0.25, cb*0.25, ca);	
+	Vertices2Insert(r,b, cr*0.25,cg*0.25, cb*0.25, ca);		
 	Vertices2Render(GL_TRIANGLE_STRIP);	
-	*/
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);	
+ */
 }
 
 void ControlRender()
@@ -354,7 +377,7 @@ void ControlRender()
 		Vertices2Insert(sv,b, cr*0.25,cg*0.25, cb*0.25, 255);	
 		Vertices2Render(GL_TRIANGLE_STRIP);	
 	}
-	ControlOverlayRender();
+	//ControlOverlayRender();
 }
 
 void FingerControl(float i,float j)
@@ -443,6 +466,40 @@ void DisableFingers()
 	}
 }
 
+void SetupTextureMapping()
+{
+	//We assume that blending is setup already
+	glEnable(GL_TEXTURE_2D);
+	glGenTextures(1,&textures[0]);
+	glBindTexture(GL_TEXTURE_2D,textures[0]);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); 
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);	
+	
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"png"];
+    NSData *texData = [[NSData alloc] initWithContentsOfFile:path];
+    UIImage *image = [[UIImage alloc] initWithData:texData];
+    if (image == nil)
+        NSLog(@"Do real error checking here");
+	
+    GLuint width = CGImageGetWidth(image.CGImage);
+    GLuint height = CGImageGetHeight(image.CGImage);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    void *imageData = malloc( height * width * 4 );
+    CGContextRef context = CGBitmapContextCreate( imageData, width, height, 8, 4 * width, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
+    CGColorSpaceRelease( colorSpace );
+    CGContextClearRect( context, CGRectMake( 0, 0, width, height ) );
+    CGContextTranslateCTM( context, 0, height - height );
+    CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), image.CGImage );
+	
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	
+    CGContextRelease(context);
+	
+    free(imageData);
+    [image release];
+    [texData release];
+}
+
 @interface ES2Renderer (PrivateMethods)
 - (BOOL)loadShaders;
 - (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file;
@@ -471,8 +528,11 @@ void DisableFingers()
         glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
         glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);		
+		
+		glEnable(GL_BLEND);		
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);	
+		//SetupTextureMapping();
+		
     }
 	//MasterVol is 1/4 in beginning
 	SliderValues[0] = 0.25;
