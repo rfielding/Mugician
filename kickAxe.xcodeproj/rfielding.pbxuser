@@ -32,9 +32,9 @@
 	};
 	2514C27010084DB100A42282 /* ES2Renderer.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {831, 9750}}";
-			sepNavSelRange = "{1942, 0}";
-			sepNavVisRange = "{1418, 878}";
+			sepNavIntBoundsRect = "{{0, 0}, {812, 9984}}";
+			sepNavSelRange = "{6421, 0}";
+			sepNavVisRange = "{6221, 945}";
 			sepNavWindowFrame = "{{598, 152}, {890, 700}}";
 		};
 	};
@@ -72,8 +72,8 @@
 	28FD14FD0DC6FC130079059D /* EAGLView.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1223, 2106}}";
-			sepNavSelRange = "{2705, 0}";
-			sepNavVisRange = "{1968, 1135}";
+			sepNavSelRange = "{2706, 0}";
+			sepNavVisRange = "{1968, 1136}";
 			sepNavWindowFrame = "{{203, 150}, {890, 700}}";
 		};
 	};
@@ -603,7 +603,7 @@
 		fRef = 28FD14FD0DC6FC130079059D /* EAGLView.m */;
 		name = "EAGLView.m: 154";
 		rLen = 0;
-		rLoc = 4149;
+		rLoc = 4150;
 		rType = 0;
 		vrLen = 1031;
 		vrLoc = 3014;
@@ -753,7 +753,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 18125;
+		rLoc = 18624;
 		rType = 0;
 		vrLen = 1192;
 		vrLoc = 13948;
@@ -793,7 +793,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 18125;
+		rLoc = 18624;
 		rType = 0;
 		vrLen = 1215;
 		vrLoc = 13948;
@@ -917,9 +917,9 @@
 	};
 	4955249911A38BF80094D445 /* AudioOutput.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {812, 4446}}";
-			sepNavSelRange = "{3158, 0}";
-			sepNavVisRange = "{2893, 1371}";
+			sepNavIntBoundsRect = "{{0, 0}, {812, 3978}}";
+			sepNavSelRange = "{2831, 0}";
+			sepNavVisRange = "{6428, 1263}";
 			sepNavWindowFrame = "{{54, 173}, {890, 700}}";
 		};
 	};
@@ -977,7 +977,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 80";
 		rLen = 0;
-		rLoc = 2671;
+		rLoc = 2514;
 		rType = 0;
 		vrLen = 720;
 		vrLoc = 0;
@@ -987,7 +987,7 @@
 		fRef = 28FD14FD0DC6FC130079059D /* EAGLView.m */;
 		name = "EAGLView.m: 156";
 		rLen = 0;
-		rLoc = 4149;
+		rLoc = 4150;
 		rType = 0;
 		vrLen = 900;
 		vrLoc = 163;
@@ -1116,7 +1116,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 128";
 		rLen = 0;
-		rLoc = 4185;
+		rLoc = 4040;
 		rType = 0;
 		vrLen = 1002;
 		vrLoc = 3631;
@@ -1136,7 +1136,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 128";
 		rLen = 0;
-		rLoc = 4185;
+		rLoc = 4040;
 		rType = 0;
 		vrLen = 995;
 		vrLoc = 3624;
@@ -1186,7 +1186,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 128";
 		rLen = 0;
-		rLoc = 4185;
+		rLoc = 4040;
 		rType = 0;
 		vrLen = 958;
 		vrLoc = 3624;
@@ -1196,7 +1196,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 127";
 		rLen = 0;
-		rLoc = 4185;
+		rLoc = 4040;
 		rType = 0;
 		vrLen = 999;
 		vrLoc = 3579;
@@ -1216,7 +1216,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 128";
 		rLen = 0;
-		rLoc = 4185;
+		rLoc = 4040;
 		rType = 0;
 		vrLen = 1060;
 		vrLoc = 3358;
@@ -1256,7 +1256,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 282";
 		rLen = 0;
-		rLoc = 6314;
+		rLoc = 6788;
 		rType = 0;
 		vrLen = 934;
 		vrLoc = 0;
@@ -1316,7 +1316,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 82";
 		rLen = 0;
-		rLoc = 1687;
+		rLoc = 1530;
 		rType = 0;
 		vrLen = 697;
 		vrLoc = 1307;
@@ -1326,7 +1326,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 82";
 		rLen = 0;
-		rLoc = 1687;
+		rLoc = 1530;
 		rType = 0;
 		vrLen = 712;
 		vrLoc = 1307;
@@ -1346,7 +1346,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 82";
 		rLen = 0;
-		rLoc = 1687;
+		rLoc = 1530;
 		rType = 0;
 		vrLen = 712;
 		vrLoc = 1307;
@@ -1376,7 +1376,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 81";
 		rLen = 0;
-		rLoc = 1687;
+		rLoc = 1530;
 		rType = 0;
 		vrLen = 782;
 		vrLoc = 1322;
@@ -1386,7 +1386,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 81";
 		rLen = 0;
-		rLoc = 1687;
+		rLoc = 1530;
 		rType = 0;
 		vrLen = 798;
 		vrLoc = 1322;
@@ -1406,7 +1406,7 @@
 		fRef = 28FD14FD0DC6FC130079059D /* EAGLView.m */;
 		name = "EAGLView.m: 95";
 		rLen = 0;
-		rLoc = 2705;
+		rLoc = 2706;
 		rType = 0;
 		vrLen = 1135;
 		vrLoc = 1968;
@@ -1416,7 +1416,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 500";
 		rLen = 0;
-		rLoc = 12180;
+		rLoc = 12679;
 		rType = 0;
 		vrLen = 1185;
 		vrLoc = 9987;
@@ -1426,7 +1426,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 79";
 		rLen = 0;
-		rLoc = 1654;
+		rLoc = 1503;
 		rType = 0;
 		vrLen = 408;
 		vrLoc = 8434;
@@ -1436,7 +1436,7 @@
 		fRef = 4955249911A38BF80094D445 /* AudioOutput.m */;
 		name = "AudioOutput.m: 124";
 		rLen = 0;
-		rLoc = 3158;
+		rLoc = 3001;
 		rType = 0;
 		vrLen = 1371;
 		vrLoc = 2893;
@@ -1456,7 +1456,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 18125;
+		rLoc = 18624;
 		rType = 0;
 		vrLen = 1170;
 		vrLoc = 13993;
@@ -1496,7 +1496,7 @@
 		fRef = 2514C27010084DB100A42282 /* ES2Renderer.m */;
 		name = "ES2Renderer.m: 633";
 		rLen = 0;
-		rLoc = 18125;
+		rLoc = 18624;
 		rType = 0;
 		vrLen = 1168;
 		vrLoc = 13993;

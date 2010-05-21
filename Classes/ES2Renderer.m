@@ -273,6 +273,29 @@ void LinesRender()
 	Vertices2Render(GL_LINES);
 }
 
+void ControlOverlayRender()
+{
+	GLfloat l = -1;
+	GLfloat r = -2.0/SPLITCOUNT;
+	GLfloat t = -1 + 2.0/SPLITCOUNT;
+	GLfloat b = -1;
+	
+	GLfloat cr = 255;
+	GLfloat cg = 255;
+	GLfloat cb = 255;
+	GLfloat ca = 127;
+	/*
+	Vertices2Clear();
+	
+	Vertices2Insert(sl,t+d, cr,cg, cb, 255);
+	Vertices2Insert(sv,t+d, cr,cg, cb, 255);
+	Vertices2Insert(sl,b, cr*0.25,cg*0.25, cb*0.25, 255);	
+	Vertices2Insert(sv,b, cr*0.25,cg*0.25, cb*0.25, 255);	
+	
+	Vertices2Render(GL_TRIANGLE_STRIP);	
+	*/
+}
+
 void ControlRender()
 {
 	GLfloat l = -1;
@@ -310,8 +333,8 @@ void ControlRender()
 		}
 		if(slider==3)
 		{
-			cr = 127;
-			cb = 127;
+			cr = 200;
+			cb = 200;
 		}
 		GLfloat crd = cr * 0.5;
 		GLfloat cgd = cg * 0.5;
@@ -331,6 +354,7 @@ void ControlRender()
 		Vertices2Insert(sv,b, cr*0.25,cg*0.25, cb*0.25, 255);	
 		Vertices2Render(GL_TRIANGLE_STRIP);	
 	}
+	ControlOverlayRender();
 }
 
 void FingerControl(float i,float j)

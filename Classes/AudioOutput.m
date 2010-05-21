@@ -61,23 +61,6 @@ static int echoN(int i,float v)
 ///as arctan, but smoother limiting
 static SInt32 limiter(float x)
 {
-	/*
-	if(x > UPPERLIMIT)
-	{
-		return UPPERLIMIT;
-	}
-	else 
-	{
-		if(x < LOWERLIMIT)
-		{
-			return LOWERLIMIT;
-		}
-		else 
-		{
-			return (SInt32)x;
-		}
-	}
-	 */
 	return UPPERLIMIT*atan(x);
 }
 
@@ -122,7 +105,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 					float a = i*pitch[j]*samplePercentage + angle[j];
 					buffer[i] += currentVol[j]*sin( a );
 					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
-					//buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
+					//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
 					buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
 					
 					//lopass filter changes to prevent popping noises
@@ -142,7 +125,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 				float a = i*pitch[j]*samplePercentage + angle[j];
 				buffer[i] += currentVol[j]*sin( a );
 				buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
-				//buffer[i] += currentVol[j]*sin( a/4 ) * harml2;
+				//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
 				buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
 			}
 			
