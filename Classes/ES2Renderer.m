@@ -29,6 +29,10 @@ static AudioOutput* lastAudio;
 static float NoteStates[NOTECOUNT];
 static float MicroStates[NOTECOUNT];
 static float SliderValues[SLIDERCOUNT];
+static float bounceX=0;
+static float bounceY=0;
+static float bounceDX=0.1;
+static float bounceDY=0.1;
 
 static GLuint textures[1];
 
@@ -291,34 +295,97 @@ static const GLfloat texCoords[] = {
 	1.0, 0.0
 };
 
-void ControlOverlayRender()
+
+void Control3RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 {
-	GLfloat l = -1;
-	GLfloat r = -2.0/SPLITCOUNT;
-	GLfloat t = -1 + 2.0/SPLITCOUNT;
-	GLfloat b = -1;
-	
-	GLfloat cr = 255;
-	GLfloat cg = 255;
-	GLfloat cb = 255;
-	GLfloat ca = 127;
-	
-/*
-    glEnableClientState(GL_VERTEX_ARRAY);	
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
-    glBindTexture(GL_TEXTURE_2D, textures[0]);
-    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-	Vertices2Clear();	
-	Vertices2Insert(l,t, cr,cg, cb, ca);
-	Vertices2Insert(r,t, cr,cg, cb, ca);
-	Vertices2Insert(l,b, cr*0.25,cg*0.25, cb*0.25, ca);	
-	Vertices2Insert(r,b, cr*0.25,cg*0.25, cb*0.25, ca);		
-	Vertices2Render(GL_TRIANGLE_STRIP);	
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);	
- */
+	GLfloat v = (2*t+b)/3;
+	GLfloat a = (t-b);
+	GLfloat n = 40;
+	Vertices2Clear();
+	for(int i=0; i<n; i++)
+	{
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*8.0*((i+tickCounter)/n)), 255,0, 0, 100);
+	}
+	Vertices2Render(GL_LINE_STRIP);	
+	Vertices2Clear();
+	for(int i=0; i<n; i++)
+	{
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*4.0*((i+tickCounter)/n)), 0,0, 255, 100);
+	}
+	Vertices2Render(GL_LINE_STRIP);	
 }
 
+void Control1RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
+{
+	GLfloat v = (2*t+b)/3;
+	GLfloat a = (t-b);
+	GLfloat n = 40;
+	GLfloat d = 0.01;
+	GLfloat U = v - 0.05;
+	GLfloat D = v + 0.05;
+	GLfloat R = 0.000005;
+	bounceX += bounceDX;
+	bounceY += bounceDY;
+	if(bounceX < l)
+	{
+		bounceX = l;
+		bounceDX = R+d;
+	}
+	if(r < bounceX)
+	{
+		bounceX = r;
+		bounceDX = -R-d;
+	}
+	if(bounceY < U)
+	{
+		bounceY = U;
+		bounceDY = R+d;
+	}
+	if(D < bounceY)
+	{
+		bounceY = D;
+		bounceDY = -R-d;
+	}
+	Vertices2Clear();
+	Vertices2Insert(bounceX-d,bounceY-d, 255,255, 255, 100);
+	Vertices2Insert(bounceX+d,bounceY-d, 255,255, 255, 100);
+	Vertices2Insert(bounceX-d,bounceY+d, 255,255, 255, 100);
+	Vertices2Insert(bounceX+d,bounceY+d, 255,255, 255, 100);
+	Vertices2Render(GL_TRIANGLE_STRIP);	
+	
+}
+						
+void Control0RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
+{
+	GLfloat v = (2*t+b)/3;
+	GLfloat a = (t-b);
+	GLfloat n = 40;
+	Vertices2Clear();
+	for(int i=0; i<n; i++)
+	{
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*8.0*((i+tickCounter)/n)), 255,255, 255, 100);
+	}
+	Vertices2Render(GL_LINE_STRIP);	
+}
+
+float sign(float x)
+{
+	return (x<=0) ? -1 : 1;
+}
+
+void Control2RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
+{
+	GLfloat v = (2*t+b)/3;
+	GLfloat a = (t-b);
+	GLfloat n = 40;
+	Vertices2Clear();
+	for(int i=0; i<n; i++)
+	{
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sign(sin(M_PI*8.0*((i+tickCounter)/n))), 255,255, 0, 100);
+	}
+	Vertices2Render(GL_LINE_STRIP);	
+}
+						
 void ControlRender()
 {
 	GLfloat l = -1;
@@ -376,8 +443,15 @@ void ControlRender()
 		Vertices2Insert(sl,b, cr*0.25,cg*0.25, cb*0.25, 255);	
 		Vertices2Insert(sv,b, cr*0.25,cg*0.25, cb*0.25, 255);	
 		Vertices2Render(GL_TRIANGLE_STRIP);	
+		
+		switch(slider)
+		{
+			case 0: Control0RenderSkin(sl,sr,t,b); break;
+			case 1: Control1RenderSkin(sl,sr,t,b); break;
+			case 2: Control2RenderSkin(sl,sr,t,b); break;
+			case 3: Control3RenderSkin(sl,sr,t,b); break;
+		}
 	}
-	//ControlOverlayRender();
 }
 
 void FingerControl(float i,float j)
