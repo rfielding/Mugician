@@ -173,16 +173,30 @@ void ButtonRender(int i,int j,float hilite)
 	float w = isWhite?1.0:0.0;
 	float k = (isWhite==false)?1.0:0.0;
 	
-	float wr = w*255-hilite*255*k;
-	float wg = w*255-hilite*255;
-	float wb = w*255+k*hilite*255;
+	float wr;// = w*255-hilite*255*k;
+	float wg;// = w*255-hilite*255;
+	float wb;// = w*255+k*hilite*255;
 	
-	float br = 0;// - hilite*255;
-	float bb = 0;
-	float bg = 0;// - hilite*255;
+	if(isWhite)
+	{
+		wr = 255;
+		wg = 255;
+		wb = 255-hilite*255;
+	}
+	else
+	{
+		wr = 0;
+		wg = 0;
+		wb = hilite*255;
+	}
+	
+	float br = 100;// - hilite*255;
+	float bb = 100;
+	float bg = 100;// - hilite*255;
 	
 	Vertices2Clear();
 	
+	/*
 	Vertices2Insert(xc,yc,wr,wg,wb,255);
 	Vertices2Insert(l,t,br,bg,bb,255);
 	Vertices2Insert(r,t,br,bg,bb,255);
@@ -198,8 +212,13 @@ void ButtonRender(int i,int j,float hilite)
 	Vertices2Insert(xc,yc,wr,wg,wb,255);
 	Vertices2Insert(l,b,br,bg,bb,255);
 	Vertices2Insert(l,t,br,bg,bb,255);
+	*/
+	Vertices2Insert(l,t,wr,wg,wb,255);
+	Vertices2Insert(r,t,wr,wg,wb,255);
+	Vertices2Insert(l,b,wr*0.5,wg*0.5,wb*0.5,255);
+	Vertices2Insert(r,b,wr*0.25,wg*0.25,wb*0.25,255);
 	
-	Vertices2Render(GL_TRIANGLES);
+	Vertices2Render(GL_TRIANGLE_STRIP);
 }
 
 void MicroRedButtonRender(int i,int j,float hilite)
@@ -209,7 +228,7 @@ void MicroRedButtonRender(int i,int j,float hilite)
 	GLfloat r = 2*((i+0.1)*f-0.5);
 	GLfloat t = 2*((j+0.5+0.1)*f-0.5);
 	GLfloat b = 2*((j+0.5-0.1)*f-0.5);
-	GLfloat h = 200*hilite;
+	GLfloat h = 255*hilite;
 	GLfloat cr = 255;
 	GLfloat cg = 0;
 	GLfloat cb = 0;
@@ -230,7 +249,7 @@ void MicroGreenButtonRender(int i,int j,float hilite)
 	GLfloat r = 2*((i+0.1+0.5)*f-0.5);
 	GLfloat t = 2*((j+0.5+0.1)*f-0.5);
 	GLfloat b = 2*((j+0.5-0.1)*f-0.5);
-	GLfloat h = 200*hilite;
+	GLfloat h = 255*hilite;
 	GLfloat cr = 0;
 	GLfloat cg = 255;
 	GLfloat cb = 0;
@@ -304,13 +323,13 @@ void Control3RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
-		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*8.0*((i+tickCounter)/n)), 255,0, 0, 100);
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*8.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
 	}
 	Vertices2Render(GL_LINE_STRIP);	
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
-		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*4.0*((i+tickCounter)/n)), 0,0, 255, 100);
+		Vertices2Insert(l+(r-l)*i/n,v + 0.2*a*sin(M_PI*4.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
 	}
 	Vertices2Render(GL_LINE_STRIP);	
 }
@@ -318,8 +337,6 @@ void Control3RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 void Control1RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 {
 	GLfloat v = (2*t+b)/3;
-	GLfloat a = (t-b);
-	GLfloat n = 40;
 	GLfloat d = 0.01;
 	GLfloat U = v - 0.05;
 	GLfloat D = v + 0.05;
@@ -346,11 +363,13 @@ void Control1RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 		bounceY = D;
 		bounceDY = -R-d;
 	}
+	GLfloat p = 255 * (bounceX-l)/(r-l);
+	
 	Vertices2Clear();
-	Vertices2Insert(bounceX-d,bounceY-d, 255,255, 255, 100);
-	Vertices2Insert(bounceX+d,bounceY-d, 255,255, 255, 100);
-	Vertices2Insert(bounceX-d,bounceY+d, 255,255, 255, 100);
-	Vertices2Insert(bounceX+d,bounceY+d, 255,255, 255, 100);
+	Vertices2Insert(bounceX-d,bounceY-d, 255,255, 255, p);
+	Vertices2Insert(bounceX+d,bounceY-d, 255,255, 255, p);
+	Vertices2Insert(bounceX-d,bounceY+d, 255,255, 255, p);
+	Vertices2Insert(bounceX+d,bounceY+d, 255,255, 255, p);
 	Vertices2Render(GL_TRIANGLE_STRIP);	
 	
 }
@@ -363,7 +382,7 @@ void Control0RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
-		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*8.0*((i+tickCounter)/n)), 255,255, 255, 100);
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*8.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
 	}
 	Vertices2Render(GL_LINE_STRIP);	
 }
@@ -381,20 +400,15 @@ void Control2RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
-		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sign(sin(M_PI*8.0*((i+tickCounter)/n))), 255,255, 0, 100);
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sign(sin(M_PI*8.0*((i+tickCounter)/n))), 255,255, 255, i/n*255);
 	}
 	Vertices2Render(GL_LINE_STRIP);	
 }
 						
 void ControlRender()
 {
-	GLfloat l = -1;
-	GLfloat r = -2.0/SPLITCOUNT;
 	GLfloat t = -1 + 2.0/SPLITCOUNT;
 	GLfloat b = -1;
-	GLfloat m = (r+l)/2;
-	//GLfloat v = (l+((reverbp)/2)*(r-l));
-	//GLfloat g = (l+(0.5+(gainp)/2)*(r-l));
 	GLfloat d = 0.01;
 	
 	GLfloat begin = -1;
@@ -433,15 +447,15 @@ void ControlRender()
 		Vertices2Clear();
 		Vertices2Insert(sv,t, crd,cgd, cbd, 255);
 		Vertices2Insert(sr,t, crd,cgd, cbd, 255);
-		Vertices2Insert(sv,b, crd*0.25,cgd*0.25, cbd*0.25, 255);	
-		Vertices2Insert(sr,b, crd*0.25,cgd*0.25, cbd*0.25, 255);	
+		Vertices2Insert(sv,b, crd*0.50*0.5,cgd*0.5*0.5, cbd*0.5*0.5, 255);	
+		Vertices2Insert(sr,b, crd*0.25*0.5,cgd*0.25*0.5, cbd*0.25*0.5, 255);	
 		Vertices2Render(GL_TRIANGLE_STRIP);	
 		
 		Vertices2Clear();
 		Vertices2Insert(sl,t+d, cr,cg, cb, 255);
 		Vertices2Insert(sv,t+d, cr,cg, cb, 255);
-		Vertices2Insert(sl,b, cr*0.25,cg*0.25, cb*0.25, 255);	
-		Vertices2Insert(sv,b, cr*0.25,cg*0.25, cb*0.25, 255);	
+		Vertices2Insert(sl,b, cr*0.5*0.5,cg*0.5*0.5, cb*0.5*0.5, 255);	
+		Vertices2Insert(sv,b, cr*0.25*0.5,cg*0.25*0.5, cb*0.25*0.5, 255);	
 		Vertices2Render(GL_TRIANGLE_STRIP);	
 		
 		switch(slider)
@@ -656,7 +670,7 @@ void SetupTextureMapping()
 	ButtonsRender();
 	MicroButtonsRender();	
 	ButtonsTrack();
-	LinesRender();
+	//LinesRender();
 	ControlRender();
 	DisableFingers();
 	FingersRender();
