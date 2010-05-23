@@ -82,16 +82,8 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 		//currentVol is exactly 0, so we don't have a float rounding issue here
 		if(currentVol[j] > 0.01 || targetVol[j] > 0.01)
 		{
-			if( 
-			   (targetVol[j] != pitch[j]) ||
-			   (currentVol[j] != currentVol[j]) ||
-			   (harmonicPercentage[j] != lastHarmonicPercentage)
-			)
-			{
-			}
 			float harm = lastHarmonicPercentage[j];
 			float samplePercentage = 1.0/samples;
-			int attackSamples = 512;
 			float g = 0.01;
 			float gInv = 1-g;
 			float unGainp = 1-gainp;
@@ -102,11 +94,15 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 				pitch[j] = targetPitch[j]; 
 				harmonicPercentage[j] = harm;
 			}
-			//CODE DUPLICATION... conceptually should call a fn when
-			// not doing lowpass filter to do attack changes
-			if(attackSamples < samples)
+			
+			//Only take lpfilter path if we have to
+			if( 
+			   (targetVol[j] != pitch[j]) ||
+			   (currentVol[j] != currentVol[j]) ||
+			   (harmonicPercentage[j] != lastHarmonicPercentage[j]) 
+			)
 			{
-				for (int i = 0; i < attackSamples; ++i) {				
+				for (int i = 0; i < samples; ++i) {				
 					float harml = (1-harm)*0.5;
 					//float harml2 = harml*0.5;	
 					float a = i*pitch[j]*samplePercentage + angle[j];
@@ -123,23 +119,20 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			}
 			else 
 			{
-				attackSamples = 0;
-			}
-
-			float harml = (1-harm)*0.5;
-			//float harml2 = harml*0.5;	
-			for (int i = attackSamples; i < samples; ++i) {				
-				float a = i*pitch[j]*samplePercentage + angle[j];
-				buffer[i] += currentVol[j]*sin( a );
-				buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
-				//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
-				buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
+				float harml = (1-harm)*0.5;
+				//float harml2 = harml*0.5;	
+				for (int i = 0; i < samples; ++i) {				
+					float a = i*pitch[j]*samplePercentage + angle[j];
+					buffer[i] += currentVol[j]*sin( a );
+					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
+					//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
+					buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
+				}
 			}
 			
 			lastPitch[j] = pitch[j];
 			lastHarmonicPercentage[j] = harmonicPercentage[j];
 			angle[j] += pitch[j];
-			//lowpass filter switch to next frequency
 		}
 	}
 	float unR = (1-reverbp);
