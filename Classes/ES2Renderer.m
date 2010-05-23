@@ -15,7 +15,7 @@
 // The pixel dimensions of the CAEAGLLayer
 static GLint backingWidth;
 static GLint backingHeight;
-static long tickCounter=0;
+static unsigned int tickCounter=0;
 
 static const double kNotesPerOctave = 12.0;
 static const double kMiddleAFrequency = 440.0;
@@ -319,7 +319,7 @@ void Control3RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 {
 	GLfloat v = (2*t+b)/3;
 	GLfloat a = (t-b);
-	GLfloat n = 40;
+	GLfloat n = 60;
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
@@ -378,7 +378,7 @@ void Control0RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 {
 	GLfloat v = (2*t+b)/3;
 	GLfloat a = (t-b);
-	GLfloat n = 40;
+	GLfloat n = 60;
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
@@ -396,7 +396,7 @@ void Control2RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 {
 	GLfloat v = (2*t+b)/3;
 	GLfloat a = (t-b);
-	GLfloat n = 40;
+	GLfloat n = 60;
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
@@ -410,6 +410,9 @@ void ControlRender()
 	GLfloat t = -1 + 2.0/SPLITCOUNT;
 	GLfloat b = -1;
 	GLfloat d = 0.01;
+	GLfloat a = (t-b);
+	
+	GLfloat v = (2*t+b)/3;
 	
 	GLfloat begin = -1;
 	GLfloat end = -2.0/SPLITCOUNT;
@@ -445,17 +448,17 @@ void ControlRender()
 		GLfloat cbd = cb * 0.5;
 		
 		Vertices2Clear();
-		Vertices2Insert(sv,t, crd,cgd, cbd, 255);
+		Vertices2Insert(sl,t, crd,cgd, cbd, 255);
 		Vertices2Insert(sr,t, crd,cgd, cbd, 255);
-		Vertices2Insert(sv,b, crd*0.50*0.5,cgd*0.5*0.5, cbd*0.5*0.5, 255);	
+		Vertices2Insert(sl,b, crd*0.50*0.5,cgd*0.5*0.5, cbd*0.5*0.5, 255);	
 		Vertices2Insert(sr,b, crd*0.25*0.5,cgd*0.25*0.5, cbd*0.25*0.5, 255);	
 		Vertices2Render(GL_TRIANGLE_STRIP);	
 		
 		Vertices2Clear();
-		Vertices2Insert(sl,t+d, cr,cg, cb, 255);
-		Vertices2Insert(sv,t+d, cr,cg, cb, 255);
-		Vertices2Insert(sl,b, cr*0.5*0.5,cg*0.5*0.5, cb*0.5*0.5, 255);	
-		Vertices2Insert(sv,b, cr*0.25*0.5,cg*0.25*0.5, cb*0.25*0.5, 255);	
+		Vertices2Insert(sl,v+a*0.27, cr,cg, cb, 255);
+		Vertices2Insert(sv,v+a*0.27, cr,cg, cb, 255);
+		Vertices2Insert(sl,v-a*0.27, cr*0.5*0.5,cg*0.5*0.5, cb*0.5*0.5, 255);	
+		Vertices2Insert(sv,v-a*0.27, cr*0.25*0.5,cg*0.25*0.5, cb*0.25*0.5, 255);	
 		Vertices2Render(GL_TRIANGLE_STRIP);	
 		
 		switch(slider)

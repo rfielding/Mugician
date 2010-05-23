@@ -7,9 +7,9 @@
 
 @implementation AudioOutput
 
-#define UPPERLIMIT 214748367
+#define UPPERLIMIT (214748367-10)
 
-static long totalSamples=0;
+static unsigned int totalSamples=0;
 static float gainp=0.5;
 static float reverbp=0.5;
 static float masterp=0.25;
@@ -61,7 +61,7 @@ static int echoN(int i,float v)
 ///as arctan, but smoother limiting
 static SInt32 limiter(float x)
 {
-	return UPPERLIMIT*atan(x);
+	return UPPERLIMIT*atan(x)/(M_PI/2);
 }
 
 static OSStatus makeNoise(AudioBufferList* buffers)
@@ -82,9 +82,16 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 		//currentVol is exactly 0, so we don't have a float rounding issue here
 		if(currentVol[j] > 0.01 || targetVol[j] > 0.01)
 		{
+			if( 
+			   (targetVol[j] != pitch[j]) ||
+			   (currentVol[j] != currentVol[j]) ||
+			   (harmonicPercentage[j] != lastHarmonicPercentage)
+			)
+			{
+			}
 			float harm = lastHarmonicPercentage[j];
 			float samplePercentage = 1.0/samples;
-			int attackSamples = 256;
+			int attackSamples = 512;
 			float g = 0.01;
 			float gInv = 1-g;
 			float unGainp = 1-gainp;
@@ -151,7 +158,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-7)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-11)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-13)%ECHO_SIZE]-p*echoBuffer[bi];
-			data[i] = limiter(masterp*(reverbp*echoBuffer[bi] + unR*distorted));
+			data[i] = limiter(1.75*masterp*(reverbp*echoBuffer[bi] + unR*distorted));
 			echoBuffer[bi] *= reverbp*0.125;
 		}
 	}
@@ -159,11 +166,12 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	{
 		for (int i = 0; i < samples; ++i) {
 			float distorted = (unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
-			data[i] = limiter(masterp*distorted);
+			data[i] = limiter(1.75*masterp*distorted);
 		}
 	}
 
 	totalSamples += samples;
+	totalSamples &= 0xEFFFFFFF;
 	return 0;
 }
 
