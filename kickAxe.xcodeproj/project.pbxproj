@@ -23,8 +23,6 @@
 		4955249A11A38BF80094D445 /* AudioOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 4955249911A38BF80094D445 /* AudioOutput.m */; };
 		495524DA11A3C5970094D445 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495524D911A3C5970094D445 /* CoreAudio.framework */; };
 		495524DE11A3C5A40094D445 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495524DD11A3C5A40094D445 /* AVFoundation.framework */; };
-		495526A611A623D80094D445 /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = 495526A511A623D80094D445 /* test.png */; };
-		495526C811A6254C0094D445 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495526C711A6254C0094D445 /* CoreGraphics.framework */; };
 		49CC5E8F1198FADE0082519F /* MyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CC5E8D1198FADE0082519F /* MyViewController.m */; };
 		49CC5E901198FADE0082519F /* MyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49CC5E8E1198FADE0082519F /* MyViewController.xib */; };
 		49E3E5F91195223500F38DDB /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 49E3E5F81195223500F38DDB /* icon.png */; };
@@ -56,8 +54,6 @@
 		4955249911A38BF80094D445 /* AudioOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioOutput.m; sourceTree = "<group>"; };
 		495524D911A3C5970094D445 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		495524DD11A3C5A40094D445 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		495526A511A623D80094D445 /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
-		495526C711A6254C0094D445 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		49CC5E8C1198FADE0082519F /* MyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyViewController.h; sourceTree = "<group>"; };
 		49CC5E8D1198FADE0082519F /* MyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyViewController.m; sourceTree = "<group>"; };
 		49CC5E8E1198FADE0082519F /* MyViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyViewController.xib; sourceTree = "<group>"; };
@@ -77,7 +73,6 @@
 				490881CF1174001800D8FBD6 /* AudioToolbox.framework in Frameworks */,
 				495524DA11A3C5970094D445 /* CoreAudio.framework in Frameworks */,
 				495524DE11A3C5A40094D445 /* AVFoundation.framework in Frameworks */,
-				495526C811A6254C0094D445 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +151,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				495526A511A623D80094D445 /* test.png */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* kickAxe-Info.plist */,
 			);
@@ -173,7 +167,6 @@
 				490881CE1174001800D8FBD6 /* AudioToolbox.framework */,
 				495524D911A3C5970094D445 /* CoreAudio.framework */,
 				495524DD11A3C5A40094D445 /* AVFoundation.framework */,
-				495526C711A6254C0094D445 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -244,7 +237,6 @@
 				49E3E5F91195223500F38DDB /* icon.png in Resources */,
 				49CC5E901198FADE0082519F /* MyViewController.xib in Resources */,
 				4928A602119BD77100322CCC /* Entitlements.plist in Resources */,
-				495526A611A623D80094D445 /* test.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

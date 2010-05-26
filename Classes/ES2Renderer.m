@@ -6,7 +6,7 @@
 //  Copyright Check Point Software 2010. All rights reserved.
 //
 
-#import <CoreGraphics/CoreGraphics.h>
+//#import <CoreGraphics/CoreGraphics.h>
 
 #import "ES2Renderer.h"
 
@@ -79,7 +79,7 @@ void ButtonsTrack()
 	NSArray* touches = [lastTouches allObjects];
 	if(touches != NULL && [touches count] > 0)
 	{
-		for(int t=0; t < [touches count] && t < FINGERS; t++)
+		for(unsigned int t=0; t < [touches count] && t < FINGERS; t++)
 		{
 			UITouch* touch = [touches objectAtIndex:t];
 			if(touch != NULL)
@@ -90,7 +90,7 @@ void ButtonsTrack()
 				int i = (int)ifl;
 				float di = ifl-i;
 				int j = SPLITCOUNT-(SPLITCOUNT * point.y)/backingHeight;
-				int n = (5*j+i)%12;
+				unsigned int n = (5*j+i)%12;
 				if((i>4||j>0) && 0<=n && n<NOTECOUNT)
 				{
 					if(di < 0.25)
@@ -114,7 +114,7 @@ void ButtonsTrack()
 		}
 	}	
 	//Fade all notes
-	for(int n=0;n<NOTECOUNT;n++)
+	for(unsigned int n=0;n<NOTECOUNT;n++)
 	{
 		NoteStates[n] *= 0.99;
 		MicroStates[n] *= 0.99;
@@ -166,12 +166,8 @@ void ButtonRender(int i,int j,float hilite)
 	GLfloat r = 2*((i+1)*f-0.5);
 	GLfloat t = 2*((j+1)*f-0.5);
 	GLfloat b = 2*((j+0)*f-0.5);
-	GLfloat xc = (l+r)/2;
-	GLfloat yc = (t+b)/2;
 	int n = (j*5+(i+9))%12;
 	int isWhite = (n==0 || n==2 || n==3 || n==5 || n==7 || n==8 || n==10);
-	float w = isWhite?1.0:0.0;
-	float k = (isWhite==false)?1.0:0.0;
 	
 	float wr;// = w*255-hilite*255*k;
 	float wg;// = w*255-hilite*255;
@@ -189,30 +185,9 @@ void ButtonRender(int i,int j,float hilite)
 		wg = 0;
 		wb = hilite*255;
 	}
-	
-	float br = 100;// - hilite*255;
-	float bb = 100;
-	float bg = 100;// - hilite*255;
-	
+		
 	Vertices2Clear();
-	
-	/*
-	Vertices2Insert(xc,yc,wr,wg,wb,255);
-	Vertices2Insert(l,t,br,bg,bb,255);
-	Vertices2Insert(r,t,br,bg,bb,255);
-	
-	Vertices2Insert(xc,yc,wr,wg,wb,255);
-	Vertices2Insert(r,t,br,bg,bb,255);
-	Vertices2Insert(r,b,br,bg,bb,255);
-	
-	Vertices2Insert(xc,yc,wr,wg,wb,255);
-	Vertices2Insert(r,b,br,bg,bb,255);
-	Vertices2Insert(l,b,br,bg,bb,255);
-	
-	Vertices2Insert(xc,yc,wr,wg,wb,255);
-	Vertices2Insert(l,b,br,bg,bb,255);
-	Vertices2Insert(l,t,br,bg,bb,255);
-	*/
+
 	Vertices2Insert(l,t,wr,wg,wb,255);
 	Vertices2Insert(r,t,wr,wg,wb,255);
 	Vertices2Insert(l,b,wr*0.5,wg*0.5,wb*0.5,255);
@@ -409,7 +384,6 @@ void ControlRender()
 {
 	GLfloat t = -1 + 2.0/SPLITCOUNT;
 	GLfloat b = -1;
-	GLfloat d = 0.01;
 	GLfloat a = (t-b);
 	
 	GLfloat v = (2*t+b)/3;

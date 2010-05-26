@@ -35,18 +35,15 @@ static int echoN(int i,float v)
 {
 	float di = 0.25;
 	float d = 0.9;
-	int r = (i+totalSamples)%ECHO_SIZE;
+	unsigned int r = (i+totalSamples)%ECHO_SIZE;
 	float p = 0.01;
 	float unP = 1-p;
-	for(int x = 0; x < 10; x++)
+	for(unsigned int x = 0; x < 10; x++)
 	{
-		int a = (r+x*ECHO_SIZE/7)%ECHO_SIZE;
-		int b = (r+x*ECHO_SIZE/11)%ECHO_SIZE;
-		int c = (r+x*ECHO_SIZE/13)%ECHO_SIZE;
+		unsigned int a = (r+x*ECHO_SIZE/7)%ECHO_SIZE;
+		unsigned int b = (r+x*ECHO_SIZE/11)%ECHO_SIZE;
+		unsigned int c = (r+x*ECHO_SIZE/13)%ECHO_SIZE;
 		float newv = di*v;
-		//echoBuffer[a] = unP * echoBuffer[a] + p * newv;
-		//echoBuffer[b] = unP * echoBuffer[b] + p * newv;
-		//echoBuffer[c] = unP * echoBuffer[c] + p * newv;
 		echoBuffer[a] += newv;
 		echoBuffer[b] += newv;
 		echoBuffer[c] += newv;
@@ -68,13 +65,13 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 {
 	AudioBuffer* outputBuffer = &buffers->mBuffers[0];
 	SInt32* data = (SInt32*)outputBuffer->mData;
-	int samples = outputBuffer->mDataByteSize / sizeof(SInt32);
+	unsigned int samples = outputBuffer->mDataByteSize / sizeof(SInt32);
 	float buffer[samples];
-	for (int i = 0; i < samples; ++i) {
+	for (unsigned int i = 0; i < samples; ++i) {
 		buffer[i] = 0;
 		data[i] = 0;
 	}
-	for(int j=0;j<FINGERS;j++)
+	for(unsigned int j=0;j<FINGERS;j++)
 	{
 		//oops.... maybe this was a performance bug, because pitch always above 0 now...
 		//just use volume and target volume to determine whether to write buffer
@@ -93,6 +90,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			{
 				pitch[j] = targetPitch[j]; 
 				harmonicPercentage[j] = harm;
+				angle[j] = 0;
 			}
 			
 			//Only take lpfilter path if we have to
@@ -102,7 +100,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			   (harmonicPercentage[j] != lastHarmonicPercentage[j]) 
 			)
 			{
-				for (int i = 0; i < samples; ++i) {				
+				for (unsigned int i = 0; i < samples; ++i) {				
 					float harml = (1-harm)*0.5;
 					//float harml2 = harml*0.5;	
 					float a = i*pitch[j]*samplePercentage + angle[j];
@@ -121,7 +119,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			{
 				float harml = (1-harm)*0.5;
 				//float harml2 = harml*0.5;	
-				for (int i = 0; i < samples; ++i) {				
+				for (unsigned int i = 0; i < samples; ++i) {				
 					float a = i*pitch[j]*samplePercentage + angle[j];
 					buffer[i] += currentVol[j]*sin( a );
 					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
@@ -142,9 +140,9 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	{
 		float p = 0.1;
 		float unP = 1-p;
-		for (int i = 0; i < samples; ++i) {
+		for (unsigned int i = 0; i < samples; ++i) {
 			float distorted = (unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
-			int bi = echoN(i,distorted);
+			unsigned int bi = echoN(i,distorted);
 			
 			//lowpass filter			
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-3)%ECHO_SIZE]-p*echoBuffer[bi];
@@ -157,7 +155,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 	}
 	else 
 	{
-		for (int i = 0; i < samples; ++i) {
+		for (unsigned int i = 0; i < samples; ++i) {
 			float distorted = (unG*buffer[i]+gainp*atan(100*gainp*buffer[i]))/40;
 			data[i] = limiter(1.75*masterp*distorted);
 		}
