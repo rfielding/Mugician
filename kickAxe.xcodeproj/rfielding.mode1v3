@@ -216,10 +216,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>49C8909A11AA128500D6EC6D</string>
+						<string>49DFBA2311AF5687002A1F29</string>
 						<key>history</key>
 						<array>
-							<string>4907313A11A997D100BAC023</string>
+							<string>49C8909A11AA128500D6EC6D</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -256,10 +256,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>49C8909B11AA128500D6EC6D</string>
+						<string>49DFBA2411AF5687002A1F29</string>
 						<key>history</key>
 						<array>
-							<string>4907313B11A997D100BAC023</string>
+							<string>49C8909B11AA128500D6EC6D</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -351,7 +351,6 @@
 								<string>29B97317FDCFA39411CA2CEA</string>
 								<string>29B97323FDCFA39411CA2CEA</string>
 								<string>28FD15070DC6FC5B0079059D</string>
-								<string>495526C711A6254C0094D445</string>
 								<string>19C28FACFE9D520D11CA2CBB</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
@@ -416,7 +415,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>49C8909911AA128500D6EC6D</string>
+										<string>49DFBA2011AF5687002A1F29</string>
 										<key>history</key>
 										<array>
 											<string>49087FBC1170070D00D8FBD6</string>
@@ -451,7 +450,7 @@
 											<string>4907313411A997D100BAC023</string>
 											<string>4907313511A997D100BAC023</string>
 											<string>49C8909711AA128500D6EC6D</string>
-											<string>49C8909811AA128500D6EC6D</string>
+											<string>49C8909911AA128500D6EC6D</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -463,14 +462,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {873, 551}}</string>
+								<string>{{0, 0}, {873, 548}}</string>
 								<key>RubberWindowFrame</key>
 								<string>98 95 1150 693 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>551pt</string>
+							<string>548pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -483,14 +482,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 556}, {873, 96}}</string>
+								<string>{{0, 553}, {873, 99}}</string>
 								<key>RubberWindowFrame</key>
 								<string>98 95 1150 693 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>96pt</string>
+							<string>99pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -509,9 +508,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>49C8907B11A9A3EF00D6EC6D</string>
+				<string>49DFBA2111AF5687002A1F29</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>49C8907C11A9A3EF00D6EC6D</string>
+				<string>49DFBA2211AF5687002A1F29</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -649,11 +648,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>49C8909C11AA128500D6EC6D</string>
-		<string>49C8909D11AA128500D6EC6D</string>
-		<string>49C8908811A9A3EF00D6EC6D</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>491E0D31116D4DD8003B7B47</string>
 		<string>4955271F11A639050094D445</string>
 		<string>495527A311A796070094D445</string>
@@ -737,7 +731,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>491E0D31116D4DD8003B7B47</string>
-				<string>49C8907F11A9A3EF00D6EC6D</string>
+				<string>49DFBA2511AF5687002A1F29</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
