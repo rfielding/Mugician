@@ -77,7 +77,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 		//just use volume and target volume to determine whether to write buffer
 		//if a note is down, the targetVol is greater than 1, and when it's up
 		//currentVol is exactly 0, so we don't have a float rounding issue here
-		if(currentVol[j] > 0.01 || targetVol[j] > 0.01)
+		if(currentVol[j] > 0.1 || targetVol[j] > 0.1)
 		{
 			float harm = lastHarmonicPercentage[j];
 			float samplePercentage = 1.0/samples;
@@ -95,8 +95,8 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			
 			//Only take lpfilter path if we have to
 			if( 
-			   (targetVol[j] != pitch[j]) ||
-			   (currentVol[j] != currentVol[j]) ||
+			   (targetPitch[j] != pitch[j]) ||
+			   (targetVol[j] != currentVol[j]) ||
 			   (harmonicPercentage[j] != lastHarmonicPercentage[j]) 
 			)
 			{
@@ -104,6 +104,7 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 					float harml = (1-harm)*0.5;
 					//float harml2 = harml*0.5;	
 					float a = i*pitch[j]*samplePercentage + angle[j];
+					//float fm = powerp+(1-powerp)*cos(a*10);
 					buffer[i] += currentVol[j]*sin( a );
 					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
 					//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
@@ -119,8 +120,9 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			{
 				float harml = (1-harm)*0.5;
 				//float harml2 = harml*0.5;	
-				for (unsigned int i = 0; i < samples; ++i) {				
+				for (unsigned int i = 0; i < samples; ++i) {		
 					float a = i*pitch[j]*samplePercentage + angle[j];
+					//float fm = powerp+(1-powerp)*cos(a*10);
 					buffer[i] += currentVol[j]*sin( a );
 					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
 					//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
