@@ -21,8 +21,9 @@ static const double kNotesPerOctave = 12.0;
 static const double kMiddleAFrequency = 440.0;
 static const double kMiddleANote = 48; //100; //24;//49;
 
-#define SLIDERCOUNT 4
+#define SLIDERCOUNT 8
 #define SPLITCOUNT 12
+#define SNAPCONTROL 7
 static NSSet* lastTouches;
 static UIView* lastTouchesView;
 static AudioOutput* lastAudio;
@@ -37,8 +38,8 @@ static float bounceDY=0.1;
 static GLuint textures[1];
 
 
-double GetFrequencyForNote(double note) {
-	return kMiddleAFrequency * pow(2, (note - kMiddleANote) / kNotesPerOctave);
+float GetFrequencyForNote(float note) {
+	return kMiddleAFrequency * powf(2, (note - kMiddleANote) / kNotesPerOctave);
 }
 
 // uniform index
@@ -91,7 +92,7 @@ void ButtonsTrack()
 				float di = ifl-i;
 				int j = SPLITCOUNT-(SPLITCOUNT * point.y)/backingHeight;
 				unsigned int n = (5*j+i)%12;
-				if((i>4||j>0) && 0<=n && n<NOTECOUNT)
+				if((j>0) && 0<=n && n<NOTECOUNT)
 				{
 					if(di < 0.25)
 					{
@@ -289,6 +290,38 @@ static const GLfloat texCoords[] = {
 	1.0, 0.0
 };
 
+void Control4RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b,GLfloat scale,int slider)
+{
+	GLfloat v = (2*t+b)/3;
+	GLfloat a = (t-b);
+	GLfloat n = 60;
+	Vertices2Clear();
+	for(int i=0; i<n; i++)
+	{
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(200*((i+tickCounter)/n)+SliderValues[6]*8*cos( scale*tickCounter/10.0)), 255,255, 255, i/n*255);
+	}
+	Vertices2Render(GL_LINE_STRIP);	
+}
+
+
+void ControlFifthsRenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
+{
+	GLfloat v = (2*t+b)/3;
+	GLfloat a = (t-b);
+	GLfloat n = 60;
+	Vertices2Clear();
+	for(int i=0; i<n; i++)
+	{
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*3*10.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
+	}
+	Vertices2Render(GL_LINE_STRIP);	
+	Vertices2Clear();
+	for(int i=0; i<n; i++)
+	{
+		Vertices2Insert(l+(r-l)*i/n,v + 0.2*a*sin(M_PI*10.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
+	}
+	Vertices2Render(GL_LINE_STRIP);	
+}
 
 void Control3RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 {
@@ -298,13 +331,13 @@ void Control3RenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
-		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*8.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
+		Vertices2Insert(l+(r-l)*i/n,v + 0.1*a*sin(M_PI*20.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
 	}
 	Vertices2Render(GL_LINE_STRIP);	
 	Vertices2Clear();
 	for(int i=0; i<n; i++)
 	{
-		Vertices2Insert(l+(r-l)*i/n,v + 0.2*a*sin(M_PI*4.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
+		Vertices2Insert(l+(r-l)*i/n,v + 0.2*a*sin(M_PI*10.0*((i+tickCounter)/n)), 255,255, 255, i/n*255);
 	}
 	Vertices2Render(GL_LINE_STRIP);	
 }
@@ -389,7 +422,7 @@ void ControlRender()
 	GLfloat v = (2*t+b)/3;
 	
 	GLfloat begin = -1;
-	GLfloat end = -2.0/SPLITCOUNT;
+	GLfloat end = 1;
 	int sliderCount=SLIDERCOUNT;
 	for(int slider=0; slider < sliderCount; slider++)
 	{
@@ -417,6 +450,27 @@ void ControlRender()
 			cr = 200;
 			cb = 200;
 		}
+		if(slider==4)
+		{
+			cr = 200;
+			cb = 200;
+		}
+		if(slider==5)
+		{
+			cr = 200;
+			cg = 100;
+		}
+		if(slider==6)
+		{
+			cr = 200;
+			cg = 100;
+		}
+		if(slider==7)
+		{
+			cr = 200;
+			cg = 100;
+		}
+		
 		GLfloat crd = cr * 0.5;
 		GLfloat cgd = cg * 0.5;
 		GLfloat cbd = cb * 0.5;
@@ -441,6 +495,12 @@ void ControlRender()
 			case 1: Control1RenderSkin(sl,sr,t,b); break;
 			case 2: Control2RenderSkin(sl,sr,t,b); break;
 			case 3: Control3RenderSkin(sl,sr,t,b); break;
+			case 4: ControlFifthsRenderSkin(sl,sr,t,b); break;
+			case 5: Control4RenderSkin(sl,sr,t,b,0.25,5); break;
+			case 6: Control0RenderSkin(sl,sr,t,b); break;
+			case 7: Control4RenderSkin(sl,sr,t,b,1.0,7); break;
+			//default:
+				//TODO
 		}
 	}
 }
@@ -448,7 +508,7 @@ void ControlRender()
 void FingerControl(float i,float j)
 {
 	//Slidercontrol spans 5 slots
-	float sliderf = SLIDERCOUNT*i/5;
+	float sliderf = SLIDERCOUNT*i/12;
 	int slider = (int)sliderf;
 	float v = sliderf - slider;
 	//NSLog(@"%d:%f",slider,v);
@@ -458,6 +518,10 @@ void FingerControl(float i,float j)
 		case 1: SliderValues[1]=v; [lastAudio setReverb: SliderValues[1]]; break;
 		case 2: SliderValues[2]=v; [lastAudio setGain: SliderValues[2]]; break;
 		case 3: SliderValues[3]=v; [lastAudio setPower: SliderValues[3]]; break;
+		case 4: SliderValues[4]=v; [lastAudio setFM1: SliderValues[4]]; break;
+		case 5: SliderValues[5]=v; [lastAudio setFM2: SliderValues[5]]; break;
+		case 6: SliderValues[6]=v; [lastAudio setFM3: SliderValues[6]]; break;
+		case 7: SliderValues[7]=v; [lastAudio setFM4: SliderValues[7]]; break;
 	}
 }
 
@@ -492,7 +556,7 @@ void FingerRenderRaw(CGPoint p,int finger)
 	CGFloat py=p.y;
 	float i = (SPLITCOUNT * px)/backingWidth;
 	float j = SPLITCOUNT-(SPLITCOUNT * py)/backingHeight;
-	if(j<1 && i<5)
+	if(j<1)
 	{
 		FingerControl(i,j);
 	}
@@ -601,9 +665,13 @@ void SetupTextureMapping()
     }
 	//MasterVol is 1/4 in beginning
 	SliderValues[0] = 0.25;
-	SliderValues[1] = 0.5;
-	SliderValues[2] = 0.5;
-	SliderValues[3] = 0.5;
+	SliderValues[1] = 0.9;
+	SliderValues[2] = 0.9;
+	SliderValues[3] = 0.9;
+	SliderValues[4] = 0.25;
+	SliderValues[5] = 0.5;
+	SliderValues[6] = 0.25;
+	SliderValues[7] = 0;
 	
 	somethingChanged = true;
 	TouchesInit();

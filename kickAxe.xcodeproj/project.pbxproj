@@ -47,8 +47,6 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* kickAxe_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kickAxe_Prefix.pch; sourceTree = "<group>"; };
 		490881CE1174001800D8FBD6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		4928A57E119BCFD900322CCC /* screwed-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "screwed-Info.plist"; sourceTree = "<group>"; };
-		4928A5EB119BD59F00322CCC /* screwed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = screwed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4928A601119BD77100322CCC /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		4955249811A38BF80094D445 /* AudioOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioOutput.h; sourceTree = "<group>"; };
 		4955249911A38BF80094D445 /* AudioOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioOutput.m; sourceTree = "<group>"; };
@@ -58,6 +56,7 @@
 		49CC5E8D1198FADE0082519F /* MyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyViewController.m; sourceTree = "<group>"; };
 		49CC5E8E1198FADE0082519F /* MyViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyViewController.xib; sourceTree = "<group>"; };
 		49E3E5F81195223500F38DDB /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		49F9A8CA11C269F700312DAB /* screwed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = screwed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D1107310486CEB800E47090 /* kickAxe-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "kickAxe-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* kickAxe.app */,
-				4928A5EB119BD59F00322CCC /* screwed.app */,
+				49F9A8CA11C269F700312DAB /* screwed.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,7 +132,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				4928A57E119BCFD900322CCC /* screwed-Info.plist */,
 				4928A601119BD77100322CCC /* Entitlements.plist */,
 			);
 			name = CustomTemplate;
@@ -205,7 +203,7 @@
 			);
 			name = screwed;
 			productName = screwed;
-			productReference = 4928A5EB119BD59F00322CCC /* screwed.app */;
+			productReference = 49F9A8CA11C269F700312DAB /* screwed.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

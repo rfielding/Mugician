@@ -2,8 +2,8 @@
 #import <Foundation/Foundation.h>
 #import <AudioUnit/AUComponent.h>
 
-#define FINGERS 10
-#define NUM_BUFFERS 4
+#define FINGERS 6
+#define NUM_BUFFERS 3
 #define BUFFER_SIZE (1024)
 #define ECHO_BITS 16
 #define ECHO_SIZE (1<<ECHO_BITS)
@@ -23,4 +23,8 @@
 - (void) setReverb:(float)r;
 - (void) setMaster:(float)m;
 - (void) setPower:(float)w;
+- (void) setFM1:(float)f;
+- (void) setFM2:(float)f;
+- (void) setFM3:(float)f;
+- (void) setFM4:(float)f;
 @end

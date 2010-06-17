@@ -10,10 +10,14 @@
 #define UPPERLIMIT (214748367-10)
 
 static unsigned int totalSamples=0;
-static float gainp=0.5;
-static float reverbp=0.5;
+static float gainp=0.9;
+static float reverbp=0.9;
 static float masterp=0.25;
-static float powerp=0.5;
+static float powerp=0.9;
+static float fm1 = 0.25;
+static float fm2 = 0.5;
+static float fm3 = 0.25;
+static float fm4 = 0;
 static const double kSampleRate = 44100.0;
 static const int kOutputBus = 0;
 
@@ -26,6 +30,9 @@ static float lastHarmonicPercentage[FINGERS];
 static float lastPitch[FINGERS];
 static float pitch[FINGERS];
 static float targetPitch[FINGERS];
+static float targetFM1=0;
+static float targetFM2=0;
+static float targetFM4=0;
 
 static float targetVol[FINGERS];
 static float currentVol[FINGERS];
@@ -84,7 +91,8 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			float g = 0.01;
 			float gInv = 1-g;
 			float unGainp = 1-gainp;
-			
+			float thisFM2 = fm2; //must reach targetFM2 if we are in middle of change
+			float thisFM4 = fm4;
 			//If we are turning on a note, then don't lpfilter vol and harmonics
 			if(currentVol[j] < 0.01)
 			{
@@ -97,18 +105,20 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			if( 
 			   (targetPitch[j] != pitch[j]) ||
 			   (targetVol[j] != currentVol[j]) ||
-			   (harmonicPercentage[j] != lastHarmonicPercentage[j]) 
+			   (harmonicPercentage[j] != lastHarmonicPercentage[j])
 			)
 			{
 				for (unsigned int i = 0; i < samples; ++i) {				
 					float harml = (1-harm)*0.5;
 					//float harml2 = harml*0.5;	
 					float a = i*pitch[j]*samplePercentage + angle[j];
-					//float fm = powerp+(1-powerp)*cos(a*10);
-					buffer[i] += currentVol[j]*sin( a );
-					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
-					//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
-					buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
+					float f = 0.75*fm3*sinf(a*(thisFM4)*4 + a*thisFM2/4);//+0.5*fm3*sinf(a*(thisFM4)*M_PI*5);
+					buffer[i] += currentVol[j]*sinf( f+a ) * (1-powerp/2);
+					buffer[i] += currentVol[j]*sinf( f+a/2 ) * 2*powerp*harml;
+					buffer[i] += currentVol[j]*sinf( f+2*a ) * 2*powerp*(harm);
+					
+					buffer[i] += currentVol[j]*sin( f+3*a/2 ) * 2*fm1*harm;
+					//buffer[i] += currentVol[j]*sin( f+3*a/4 ) * 2*fm1*harml;
 					
 					//lopass filter changes to prevent popping noises
 					pitch[j] = 0.9 * pitch[j] + 0.1 * targetPitch[j];
@@ -122,19 +132,25 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 				//float harml2 = harml*0.5;	
 				for (unsigned int i = 0; i < samples; ++i) {		
 					float a = i*pitch[j]*samplePercentage + angle[j];
-					//float fm = powerp+(1-powerp)*cos(a*10);
-					buffer[i] += currentVol[j]*sin( a );
-					buffer[i] += currentVol[j]*sin( a/2 ) * 2*powerp*harml;
-					//buffer[i] += currentVol[j]*sin( a/4 ) * powerp*harml;
-					buffer[i] += currentVol[j]*sin( 2*a ) *2*powerp*(harm);
+					//float f = fm1*cosf(a*(thisFM2+thisFM3*0.1)*M_PI*5);
+					//float f = 0.5*fm1*sinf(a*(thisFM2)*M_PI*5);
+					float f = 0.75*fm3*sinf(a*(thisFM4)*4 + a*thisFM2/4);//+0.5*fm3*sinf(a*(thisFM4)*M_PI*5);					
+					buffer[i] += currentVol[j]*sinf( f+a ) * (1-powerp/2);
+					buffer[i] += currentVol[j]*sinf( f+a/2 ) * 2*powerp*harml;
+					buffer[i] += currentVol[j]*sinf( f+2*a ) * 2*powerp*(harm);
+					
+					buffer[i] += currentVol[j]*sin( f+3*a/2 ) * 4*fm1*harm;
+					//buffer[i] += currentVol[j]*sin( f+3*a/4 ) * 2*fm1*harml;
 				}
 			}
-			
 			lastPitch[j] = pitch[j];
 			lastHarmonicPercentage[j] = harmonicPercentage[j];
 			angle[j] += pitch[j];
 		}
 	}
+	fm1 = (3*fm1+targetFM1)/4;
+	fm2 = (3*fm2+targetFM2)/4;
+	fm4 = (3*fm4+targetFM4)/4;
 	float unR = (1-reverbp);
 	float unG = (1-gainp);
 	//If reverb is low, then turn it off for performance (ie: external recording)
@@ -152,7 +168,8 @@ static OSStatus makeNoise(AudioBufferList* buffers)
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-11)%ECHO_SIZE]-p*echoBuffer[bi];
 			echoBuffer[bi] += unP*echoBuffer[(bi+ECHO_SIZE-13)%ECHO_SIZE]-p*echoBuffer[bi];
 			data[i] = limiter(1.75*masterp*(reverbp*echoBuffer[bi] + unR*distorted));
-			echoBuffer[bi] *= reverbp*0.125;
+			//echoBuffer[bi] *= reverbp*0.13;
+			echoBuffer[bi] *= reverbp*0.13;
 		}
 	}
 	else 
@@ -333,6 +350,23 @@ static OSStatus playCallback(void *inRefCon,
 - (void) setPower:(float)w
 {
 	powerp = w;
+}
+
+- (void) setFM1:(float)f
+{
+	targetFM1 = f;
+}
+- (void) setFM2:(float)f
+{
+	targetFM2 = f;
+}
+- (void) setFM3:(float)f
+{
+	fm3 = f;
+}
+- (void) setFM4:(float)f
+{
+	targetFM4 = f;
 }
 
 @end
