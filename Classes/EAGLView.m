@@ -14,8 +14,6 @@
 
 #import "ES2Renderer.h"
 
-#import "AudioOutput.h"
-
 @implementation EAGLView
 
 @synthesize animating;
@@ -33,7 +31,7 @@
 	NSError* asError = nil;
 	AVAudioSession* session = [AVAudioSession sharedInstance];
 	[session setCategory:AVAudioSessionCategoryAmbient error:&asError];
-	
+
     if ((self = [super initWithCoder:coder]))
     {
         // Get the layer
@@ -64,6 +62,8 @@
         if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
             displayLinkSupported = TRUE;
     }
+	self.multipleTouchEnabled=TRUE;
+	
 	//lastTouchesView = self;
     return self;
 }
@@ -92,7 +92,7 @@
     // frame interval setting of one will fire 60 times a second when the display refreshes
     // at 60 times a second. A frame interval setting of less than one results in undefined
     // behavior.
-    if (frameInterval >= 32)
+    if (frameInterval >= 60)
     {
         animationFrameInterval = frameInterval;
 
@@ -146,24 +146,24 @@
 {
 	NSSet* allTouches = [event allTouches];
 	[renderer touchesBegan:allTouches atView:self];
-	//lastTouches = allTouches;
-	//lastTouchesView = self;
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	NSSet* allTouches = [event allTouches];
 	[renderer touchesMoved:allTouches atView:self];
-	//lastTouches = allTouches;
-	//lastTouchesView = self;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	NSSet* allTouches = [event allTouches];
 	[renderer touchesEnded:allTouches atView:self];
-	//lastTouches = allTouches;
-	//lastTouchesView = self;
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	NSSet* allTouches = [event allTouches];
+	[renderer touchesCancelled:allTouches atView:self];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 

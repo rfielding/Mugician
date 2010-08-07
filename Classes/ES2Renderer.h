@@ -13,6 +13,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "AudioOutput.h"
 
+
 @interface ES2Renderer : NSObject <ESRenderer>
 {
 @private
@@ -33,6 +34,7 @@
 - (void)touchesBegan:(NSSet*)touches atView:(UIView*)v;
 - (void)touchesMoved:(NSSet*)touches atView:(UIView*)v;
 - (void)touchesEnded:(NSSet*)touches atView:(UIView*)v;
+- (void)touchesCancelled:(NSSet*)touches atView:(UIView*)v;
 
 @end
 
