@@ -749,6 +749,7 @@ void RecheckFingers()
 		}
 	}
 	ComputeMaxNotes();
+	///*
 	for(unsigned int t=0; t < TOUCHQUEUELEN; t++)
 	{
 		if( touchPhase[t] == UITouchPhaseBegan )
@@ -760,6 +761,7 @@ void RecheckFingers()
 			}
 		}
 	}
+	 //*/
 }
 
 static inline void FadeNotes()
@@ -2387,16 +2389,7 @@ void FingersRender(bool fresh)
 			MoveIndexByTouch(touch,v,t);
 		}
 		else
-		if(phase==UITouchPhaseEnded)
-		{
-			int touchIndex = FindIndexByTouch(touch,t);
-			if(touchIndex >= 0)
-			{
-				DeleteTouchByIndex(touchIndex,t);
-			}
-		}
-		else
-		if(phase==UITouchPhaseCancelled)
+		if(phase==UITouchPhaseEnded || phase==UITouchPhaseCancelled)
 		{
 			int touchIndex = FindIndexByTouch(touch,t);
 			if(touchIndex >= 0)
@@ -2427,16 +2420,6 @@ void FingersRender(bool fresh)
 			}
 		}
 		else
-		if(phase==UITouchPhaseEnded)
-		{
-			deadTouches++;
-			int touchIndex = FindIndexByTouch(touch,t);
-			if(touchIndex >= 0)
-			{
-				DeleteTouchByIndex(touchIndex,t);
-			}
-		}
-		else
 		if(phase==UITouchPhaseCancelled)
 		{
 			deadTouches++;
@@ -2455,7 +2438,8 @@ void FingersRender(bool fresh)
 			[lastAudio setVol:0.0 forFinger:t];
 		}
 	}
-	ButtonsTrack();
+	//ButtonsTrack();
+	[self render];
 }
 
 
@@ -2467,16 +2451,7 @@ void FingersRender(bool fresh)
 	{
 		UITouch* touch = [touchArray objectAtIndex:t];
 		UITouchPhase phase = [touch phase];
-		if(phase==UITouchPhaseEnded)
-		{
-			int touchIndex = FindIndexByTouch(touch,t);
-			if(touchIndex >= 0)
-			{
-				DeleteTouchByIndex(touchIndex,t);
-			}
-		}
-		else
-		if(phase==UITouchPhaseCancelled)
+		if(phase==UITouchPhaseEnded || phase==UITouchPhaseCancelled)
 		{
 			int touchIndex = FindIndexByTouch(touch,t);
 			if(touchIndex >= 0)
