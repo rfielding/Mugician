@@ -2,50 +2,50 @@
 #import <Foundation/Foundation.h>
 #import <AudioUnit/AUComponent.h>
 
-#define FINGERS 8
+#define FINGERS 10
 
-#define NUM_BUFFERS 4
-#define BUFFER_SIZE (1024)
-#define ECHO_BITS 16
-#define ECHO_SIZE (1<<ECHO_BITS)
+#define NUM_BUFFERS 3
 
-#define SLIDER0 0.25
-#define SLIDER1 0.79296875
-#define SLIDER2 0.663085938
-#define SLIDER3 0.735351562
-#define SLIDER4 0.25
-#define SLIDER5 0.48
-#define SLIDER6 0.5
-#define SLIDER7 0.0
-#define SLIDER8 0.400000006
+#define ECHOSIZE (1<<18)
+#define REVERBSIZE (1<<16)
 
-float bufferL[BUFFER_SIZE];
-float bufferR[BUFFER_SIZE];
+//#define BUFFER_SIZE (1024)
+
+//1Mb buffer
+//#define ECHO_BITS 20
+//#define ECHO_SIZE (1<<ECHO_BITS)
+//#define ECHO_MASK (ECHO_SIZE-1)
+
+float bufferL[1024*4]; //bufferSamples could be smaller!  should not be larger
+float bufferR[1024*4];
+unsigned int bufferSamples;
+//unsigned int echo_size;
 
 float minimumFrequency;
 float frequencyPeriod;
-unsigned int totalSamples;
+unsigned int stride;
 unsigned int oscilliscopeCursor;
+unsigned int totalSamples;
+AudioComponentInstance audioUnit;
+AudioStreamBasicDescription audioFormat;
 
 @interface AudioOutput : NSObject {
  @private
-  AudioComponentInstance audioUnit;
-  AudioStreamBasicDescription audioFormat;
 }
 
 - (void) start;
 
-- (void) setPan:(float)p forFinger:(int)f;
-- (void) setNote:(float)p forFinger:(int)f;
-- (void) setVol:(float)v forFinger:(int)f;
-- (void) setAttackVol:(float)v forFinger:(int)f;
-- (void) setHarmonics:(float)h forFinger:(int)f;
+- (void) setPan:(float)p forFinger:(unsigned int)f;
+- (void) setNote:(float)p forFinger:(unsigned int)f isAttack:(unsigned int)a;
+- (void) setVol:(float)v forFinger:(unsigned int)f;
+- (void) setAttackVol:(float)v forFinger:(unsigned int)f;
+- (void) setHarmonics:(float)h forFinger:(unsigned int)f;
 - (void) setGain:(float)g;
 - (void) setReverb:(float)r;
 - (void) setMaster:(float)m;
 - (void) setPower:(float)w;
 - (void) setFM1:(float)f;
-- (void) setFM2:(float)f;
-- (void) setFM3:(float)f;
-- (void) setFM4:(float)f;
+- (void) setDelayTime:(float)f;
+- (void) setDelayFeedback:(float)f;
+- (void) setDelayVolume:(float)f;
 @end

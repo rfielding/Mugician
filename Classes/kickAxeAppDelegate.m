@@ -10,12 +10,12 @@
 #import "EAGLView.h"
 #import "MyViewController.h"
 
+
 @implementation kickAxeAppDelegate
 
 @synthesize window;
 @synthesize glView;
 @synthesize myViewController;
-
 
 
 
@@ -25,12 +25,10 @@
 											   
 											   initWithNibName:@"MyViewController" bundle:[NSBundle mainBundle]];
     [self setMyViewController:aViewController];
-	UIView *controllersView = [aViewController view];
-	[controllersView addSubview:glView];
-	
-	[window addSubview:controllersView];
-	
-	
+	UIView* theView = [aViewController view];
+	[glView removeFromSuperview];
+	[theView addSubview:glView];	
+	[window addSubview:theView];	
     [window makeKeyAndVisible];
 	
     [aViewController release];

@@ -15,6 +15,9 @@
 
 - (void)render;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
-//- (void)setCenterPoint:(CGPoint)point;
+- (void)touchesBegan:(NSSet*)touches atView:(UIView*)v;
+- (void)touchesMoved:(NSSet*)touches atView:(UIView*)v;
+- (void)touchesEnded:(NSSet*)touches atView:(UIView*)v;
+- (void)touchesCancelled:(NSSet*)touches atView:(UIView*)v;
 @end
 

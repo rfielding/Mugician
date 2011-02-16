@@ -50,17 +50,9 @@
         }
 
         animating = FALSE;
-        displayLinkSupported = FALSE;
         animationFrameInterval = 1;
         displayLink = nil;
         animationTimer = nil;
-
-        // A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
-        // class is used as fallback when it isn't available.
-        NSString *reqSysVer = @"3.1";
-        NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-        if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
-            displayLinkSupported = TRUE;
     }
 	self.multipleTouchEnabled=TRUE;
 	
@@ -92,7 +84,7 @@
     // frame interval setting of one will fire 60 times a second when the display refreshes
     // at 60 times a second. A frame interval setting of less than one results in undefined
     // behavior.
-    if (frameInterval >= 60)
+    if (frameInterval >= 16)
     {
         animationFrameInterval = frameInterval;
 
@@ -120,16 +112,8 @@
 {
     if (animating)
     {
-        if (displayLinkSupported)
-        {
-            [displayLink invalidate];
-            displayLink = nil;
-        }
-        else
-        {
-            [animationTimer invalidate];
-            animationTimer = nil;
-        }
+		[displayLink invalidate];
+		displayLink = nil;
 
         animating = FALSE;
     }
