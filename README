@@ -12,9 +12,23 @@ NOTE: You cannot submit this as it is to the Apple Store even if you changed the
 Contact me at rob.fielding@gmail.com
 
 
+THE INSTRUMENT:
+
+This is what Mugician is capable of (at least!).  I have professional musicians using it on a daily basis. 
+It has appeared on Underoath's Disambiguation, Gorillaz 'The Fall', JordanRudess+ProjectRnL collaboration,
+have seen live footage by Ekoostik Hookah, White Rainbow, etc.  
+A lot of people will be mad if we fill it full of useless junk that's not related to making a playable instrument.
+This is what I mean by 'playable':
+
+http://www.youtube.com/watch?v=psKLWzTZveg
+
+
+
+
 LATENCY:
 
 Please measure latency with a mic panned left and instrument panned right through a mixer and compare the acoustic vs electronic peaks.  If latency is much above 30ms, it is as bad as the build being broke.  A 100ms Mugician is as useless as if it never even compiled.
+
 DISCLAIMER:
 
 This code is NUTS.  Much was decided in just a few days after I got my iPad and figured out AudioQueue.  It was rushed to reach the international deadline for iPads to come out.  Then there was a very long time... months... of simply tweaking magic numbers with headphones on.  The UI is quite hard-coded, and it's not completely necessary for me to have done this.
