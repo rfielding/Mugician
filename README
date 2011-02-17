@@ -22,8 +22,12 @@ This is what I mean by 'playable':
 
 http://www.youtube.com/watch?v=psKLWzTZveg
 
-
-
+For a sense of how minimal this is, note that a build that I submit to the store is only 50k in size.
+A PNG screenshot is nearly twice that size!
+A typical iPad music app can easily be a 12Mb.
+It really boggles my mind.
+But small size matters because the various levels of cache will miss more often if things are just generally huge everywhere.
+When I write code for Mugician, I think more about branch prediction misses than anything else.
 
 LATENCY:
 
