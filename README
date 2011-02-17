@@ -10,3 +10,13 @@ If you submit something to Apple, at least change the name and app id, and MAKE 
 NOTE: You cannot submit this as it is to the Apple Store even if you changed the name and app id.  It does things that need to be commented out before you can do that.
 
 Contact me at rob.fielding@gmail.com
+
+
+LATENCY:
+
+Please measure latency with a mic panned left and instrument panned right through a mixer and compare the acoustic vs electronic peaks.  If latency is much above 30ms, it is as bad as the build being broke.  A 100ms Mugician is as useless as if it never even compiled.
+DISCLAIMER:
+
+This code is NUTS.  Much was decided in just a few days after I got my iPad and figured out AudioQueue.  It was rushed to reach the international deadline for iPads to come out.  Then there was a very long time... months... of simply tweaking magic numbers with headphones on.  The UI is quite hard-coded, and it's not completely necessary for me to have done this.
+
+My new Instrument Pythagoras normalizes the coordinates around { <-1,-1>, <1,1> } and moves the controls out into UIKit.  Surprisingly, it didn't affect latency too much to do this.  I am trying to make libpd work in that code, but I can't get the latency anywhere near where it needs to be.  The buffer latency is very low, but sending changes out to the synth are apparently queueing up.  I can compare side-by-side with Mugician's engine, and the difference is very obvious.  It might be purely my mistake though.  If you know libpd well, please contact me if you think you can help with Pythagoras.
