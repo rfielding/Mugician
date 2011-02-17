@@ -1,0 +1,9 @@
+LICENSE: You can submit changes to this repository, but please do it on your own branch for my sanity's sake.  
+If you submit something to Apple, at least change the name and app id, and MAKE SURE that your app and Mugician can be co-installed on the same iPad.
+
+1) Give me credit for your code being a fork of Mugician.
+
+2) DON'T BREAK MY EXISTING MUGICIAN USERS PLEASE.  
+
+3) Don't confuse my users.  Mugician is my trademark.  Come up with your own name.  
+
