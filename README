@@ -16,18 +16,11 @@ THE INSTRUMENT:
 
 This is what Mugician is capable of (at least!).  I have professional musicians using it on a daily basis. 
 It has appeared on Underoath's Disambiguation, Gorillaz 'The Fall', JordanRudess+ProjectRnL collaboration,
-have seen live footage by Ekoostik Hookah, White Rainbow, etc.  
-A lot of people will be mad if we fill it full of useless junk that's not related to making a playable instrument.
-This is what I mean by 'playable':
-
+have seen live footage by Ekoostik Hookah, White Rainbow, Michael Atonal Vick, etc.  I have been told that it is becoming a bit of a standard among fretless guitar players.  A lot of people will be mad if we fill it full of useless junk that's not related to making a playable instrument.  This is what I mean by 'playable':
+ 
 http://www.youtube.com/watch?v=psKLWzTZveg
 
-For a sense of how minimal this is, note that a build that I submit to the store is only 50k in size.
-A PNG screenshot is nearly twice that size!
-A typical iPad music app can easily be a 12Mb.
-It really boggles my mind.
-But small size matters because the various levels of cache will miss more often if things are just generally huge everywhere.
-When I write code for Mugician, I think more about branch prediction misses than anything else.
+For a sense of how minimal this is, note that a build that I submit to the store is only 50k in size.  A PNG screenshot is nearly twice that size!  A typical iPad music app can easily be a 12Mb.  It really boggles my mind.  But small size matters because the various levels of cache will miss more often if things are just generally huge everywhere.  When I write code for Mugician, I think more about branch prediction misses than anything else.
 
 LATENCY:
 
