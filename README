@@ -1,3 +1,9 @@
+WHAT IS IT?:
+
+I suggest that you read the manual for the instrument:
+
+http://rrr00bb.blogspot.com/2010/08/mugician-heiroglyphics.html
+
 LICENSE: You can submit changes to this repository, but please do it on your own branch for my sanity's sake.  
 If you submit something to Apple, at least change the name and app id, and MAKE SURE that your app and Mugician can be co-installed on the same iPad.
 
@@ -28,7 +34,7 @@ For a sense of how minimal this is, note that a build that I submit to the store
 
 LATENCY:
 
-Please measure latency with a mic panned left and instrument panned right through a mixer and compare the acoustic vs electronic peaks.  If latency is much above 30ms, it is as bad as the build being broke.  A 100ms Mugician is as useless as if it never even compiled.
+Please measure latency with a mic panned left and instrument panned right through a mixer and compare the acoustic vs electronic peaks.  If latency is much above 30ms, it is as bad as the build being broke.  A 100ms Mugician is as useless as if it never even compiled.  Unfortunately, a very large number of instruments in the store either don't understand this concept at all, or are living beyond their means computationally.  There is no point at all in having a fantastic sound engine if you can't actually play it like an instrument due to latency, or worse, to have some incredible graphics that just causes the sound or playability to come out horrible.
 
 DISCLAIMER:
 
