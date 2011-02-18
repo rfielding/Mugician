@@ -4,14 +4,18 @@ I suggest that you read the manual for the instrument:
 
 http://rrr00bb.blogspot.com/2010/08/mugician-heiroglyphics.html
 
-LICENSE: You can submit changes to this repository, but please do it on your own branch for my sanity's sake.  
+LICENSE: 
+
+You can submit changes to this repository, but please do it on your own branch for my sanity's sake.  
 If you submit something to Apple, at least change the name and app id, and MAKE SURE that your app and Mugician can be co-installed on the same iPad.
 
-1) Give me credit for your code being a fork of Mugician.
+1) Give me credit for your code being a fork of "the Mugician free open source project".  Credit must be posted in your app description so that you cannot avoid mentioning the existence of the free version of Mugician in your app description.
 
 2) DON'T BREAK MY EXISTING MUGICIAN USERS PLEASE.  
 
 3) Don't confuse my users.  Mugician is my trademark.  Come up with your own name.  
+
+4) Any versions that you add into the store shall be buildable from a branch of this Mugician project and hosted in this repository on github, with only one exception:  If you have a compelling reason why you cannot do this, then contact me and I can write in an exception for you.  This exception will be version controlled in this README file for all to see, with my name on the commit.  I don't want a leech developer posting a malware, nagware, or adware version of this instrument under any circumstances.  
 
 NOTE: You cannot submit this as it is to the Apple Store even if you changed the name and app id.  It does things that need to be commented out before you can do that.
 
