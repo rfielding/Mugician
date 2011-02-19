@@ -32,9 +32,9 @@
 	};
 	2514C27010084DB100A42282 /* ES2Renderer.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {821, 32825}}";
-			sepNavSelRange = "{15887, 0}";
-			sepNavVisRange = "{15396, 660}";
+			sepNavIntBoundsRect = "{{0, 0}, {1244, 32071}}";
+			sepNavSelRange = "{10889, 0}";
+			sepNavVisRange = "{47119, 572}";
 			sepNavWindowFrame = "{{284, 36}, {1081, 791}}";
 		};
 	};
@@ -71,9 +71,9 @@
 	};
 	28FD14FD0DC6FC130079059D /* EAGLView.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1223, 1989}}";
-			sepNavSelRange = "{347, 0}";
-			sepNavVisRange = "{30, 1172}";
+			sepNavIntBoundsRect = "{{0, 0}, {1223, 2028}}";
+			sepNavSelRange = "{3388, 0}";
+			sepNavVisRange = "{2899, 861}";
 			sepNavWindowFrame = "{{203, 150}, {890, 700}}";
 		};
 	};
@@ -91,7 +91,6 @@
 		codeSenseManager = 491E0D3B116D4DD8003B7B47 /* Code sense */;
 		executables = (
 			491E0D20116D4DD1003B7B47 /* mugician */,
-			49F9A8CB11C269F700312DAB /* screwed */,
 		);
 		expressions = (
 			outputComponent,
@@ -421,7 +420,7 @@
 		fRef = 496B96121240FBD10098E033 /* AudioOutput.m */;
 		name = "AudioOutput.m: 366";
 		rLen = 0;
-		rLoc = 9429;
+		rLoc = 9622;
 		rType = 0;
 		vrLen = 547;
 		vrLoc = 14425;
@@ -518,12 +517,6 @@
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
-	4928A57B119BCFD900322CCC /* screwed */ = {
-		activeExec = 0;
-		executables = (
-			49F9A8CB11C269F700312DAB /* screwed */,
-		);
-	};
 	493A9CC81213768A00693BC9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 493A9CC91213768A00693BC9 /* math.h */;
@@ -567,9 +560,9 @@
 	};
 	4955249911A38BF80094D445 /* AudioOutput.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {866, 8164}}";
-			sepNavSelRange = "{1399, 0}";
-			sepNavVisRange = "{12661, 865}";
+			sepNavIntBoundsRect = "{{0, 0}, {866, 7904}}";
+			sepNavSelRange = "{1657, 0}";
+			sepNavVisRange = "{13744, 623}";
 			sepNavWindowFrame = "{{146, 47}, {581, 742}}";
 		};
 	};
@@ -673,7 +666,7 @@
 		rLen = 0;
 		rLoc = 10889;
 		rType = 0;
-		vrLen = 763;
+		vrLen = 355;
 		vrLoc = 58884;
 	};
 	49CCC76712FDDCD9004B5C9F /* PBXTextBookmark */ = {
@@ -820,33 +813,6 @@
 	49F22CBF1198DC1C00BED9A5 /* PBXBookmark */ = {
 		isa = PBXBookmark;
 		fRef = 49E3E5F81195223500F38DDB /* icon.png */;
-	};
-	49F9A8CB11C269F700312DAB /* screwed */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-		);
-		argumentStrings = (
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 0;
-		configStateDict = {
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		enableDebugStr = 1;
-		environmentEntries = (
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		libgmallocEnabled = 0;
-		name = screwed;
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
 	};
 	8D1107310486CEB800E47090 /* kickAxe-Info.plist */ = {
 		uiCtxt = {

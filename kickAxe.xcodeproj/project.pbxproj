@@ -56,7 +56,6 @@
 		49CC5E8E1198FADE0082519F /* MyViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyViewController.xib; sourceTree = "<group>"; };
 		49D73C0F1218DF980042E8BD /* mugician.presets */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mugician.presets; sourceTree = "<group>"; };
 		49E3E5F81195223500F38DDB /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		49F9A8CA11C269F700312DAB /* screwed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = screwed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D1107310486CEB800E47090 /* kickAxe-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "kickAxe-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,13 +71,6 @@
 				49148ED4128527400098B483 /* OpenGLES.framework in Frameworks */,
 				49148ED6128527400098B483 /* QuartzCore.framework in Frameworks */,
 				49148ED8128527400098B483 /* UIKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4928A57A119BCFD900322CCC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +100,6 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* kickAxe.app */,
-				49F9A8CA11C269F700312DAB /* screwed.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -189,23 +180,6 @@
 			productReference = 1D6058910D05DD3D006BFB54 /* kickAxe.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4928A57B119BCFD900322CCC /* screwed */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4928A581119BCFDA00322CCC /* Build configuration list for PBXNativeTarget "screwed" */;
-			buildPhases = (
-				4928A578119BCFD900322CCC /* Resources */,
-				4928A579119BCFD900322CCC /* Sources */,
-				4928A57A119BCFD900322CCC /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = screwed;
-			productName = screwed;
-			productReference = 49F9A8CA11C269F700312DAB /* screwed.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -226,7 +200,6 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* mugician */,
-				4928A57B119BCFD900322CCC /* screwed */,
 			);
 		};
 /* End PBXProject section */
@@ -245,13 +218,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4928A578119BCFD900322CCC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -265,13 +231,6 @@
 				2514C27310084DB100A42282 /* ES2Renderer.m in Sources */,
 				49CC5E8F1198FADE0082519F /* MyViewController.m in Sources */,
 				4955249A11A38BF80094D445 /* AudioOutput.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4928A579119BCFD900322CCC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,55 +265,6 @@
 				PRODUCT_NAME = kickAxe;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		4928A57F119BCFDA00322CCC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
-				INFOPLIST_FILE = "screwed-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					UIKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = screwed;
-				SDKROOT = iphoneos3.2;
-			};
-			name = Debug;
-		};
-		4928A580119BCFDA00322CCC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
-				INFOPLIST_FILE = "screwed-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					UIKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = screwed;
-				SDKROOT = iphoneos3.2;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -405,30 +315,6 @@
 			};
 			name = Release2;
 		};
-		4928A5AE119BD12400322CCC /* Release2 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
-				INFOPLIST_FILE = "screwed-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					UIKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = screwed;
-				SDKROOT = iphoneos3.2;
-			};
-			name = Release2;
-		};
 		4928A5CF119BD41400322CCC /* Debug2 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -460,30 +346,6 @@
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				INFOPLIST_FILE = "kickAxe-Info.plist";
 				PRODUCT_NAME = kickAxe;
-			};
-			name = Debug2;
-		};
-		4928A5D1119BD41400322CCC /* Debug2 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
-				INFOPLIST_FILE = "screwed-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					UIKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = screwed;
-				SDKROOT = iphoneos3.2;
 			};
 			name = Debug2;
 		};
@@ -522,30 +384,6 @@
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				INFOPLIST_FILE = "kickAxe-Info.plist";
 				PRODUCT_NAME = kickAxe;
-			};
-			name = Distribution;
-		};
-		49983AFD119FA3CA00223A8A /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
-				INFOPLIST_FILE = "screwed-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					UIKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = screwed;
-				SDKROOT = iphoneos3.2;
 			};
 			name = Distribution;
 		};
@@ -598,18 +436,6 @@
 				4928A5AD119BD12400322CCC /* Release2 */,
 				49983AFC119FA3CA00223A8A /* Distribution */,
 				1D6058950D05DD3E006BFB54 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release2;
-		};
-		4928A581119BCFDA00322CCC /* Build configuration list for PBXNativeTarget "screwed" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4928A57F119BCFDA00322CCC /* Debug */,
-				4928A5D1119BD41400322CCC /* Debug2 */,
-				4928A5AE119BD12400322CCC /* Release2 */,
-				49983AFD119FA3CA00223A8A /* Distribution */,
-				4928A580119BCFDA00322CCC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release2;
