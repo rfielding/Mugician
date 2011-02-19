@@ -65,21 +65,28 @@ static OSStatus fixGDLatency()
 {
 	float latency = 0.005;
 	
-	OSStatus status = AudioSessionSetProperty(
+	OSStatus 
+	status = AudioSessionSetProperty(
 											  kAudioSessionProperty_PreferredHardwareIOBufferDuration,
 											  sizeof(latency),&latency
 											  );
+	UInt32 allowMixing = true;
+	status = AudioSessionSetProperty(
+											  kAudioSessionProperty_OverrideCategoryMixWithOthers,
+											  sizeof(allowMixing),&allowMixing
+											  );
 	
+	
+	/*
 	AudioStreamBasicDescription auFmt;
-	UInt32 auFmtSize = sizeof(AudioStreamBasicDescription);
-	
+	UInt32 auFmtSize = sizeof(AudioStreamBasicDescription);	
 	AudioUnitGetProperty(audioUnit,
 						 kAudioUnitProperty_StreamFormat,
 						 kAudioUnitScope_Output,
 						 kOutputBus,
 						 &auFmt,
 						 &auFmtSize);
-	
+	*/
 	//NSLog(@"Samples: %d,%f  %fms",bufferSamples,auFmt.mSampleRate, bufferSamples*1000/auFmt.mSampleRate);
 	return status;
 }

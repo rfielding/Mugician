@@ -81,7 +81,7 @@
 		activeArchitecturePreference = armv7;
 		activeBuildConfigurationName = Release2;
 		activeExecutable = 491E0D20116D4DD1003B7B47 /* mugician */;
-		activeSDKPreference = iphonesimulator4.2;
+		activeSDKPreference = iphoneos4.2;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* mugician */;
 		addToTargets = (
 			1D6058900D05DD3D006BFB54 /* mugician */,
@@ -310,8 +310,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 319772819;
-			PBXWorkspaceStateSaveDate = 319772819;
+			PBXPerProjectTemplateStateSaveDate = 319780104;
+			PBXWorkspaceStateSaveDate = 319780104;
 		};
 		perUserProjectItems = {
 			49018A4912C2E63D002EB130 = 49018A4912C2E63D002EB130 /* PBXTextBookmark */;
@@ -323,8 +323,8 @@
 			491C79D7123F131F00746A81 = 491C79D7123F131F00746A81 /* PBXTextBookmark */;
 			493A9CC81213768A00693BC9 = 493A9CC81213768A00693BC9 /* PBXTextBookmark */;
 			493A9CDF121378DE00693BC9 = 493A9CDF121378DE00693BC9 /* PBXTextBookmark */;
-			4957B133130F58AA003601DE /* PBXTextBookmark */ = 4957B133130F58AA003601DE /* PBXTextBookmark */;
-			4957B134130F58AA003601DE /* PBXTextBookmark */ = 4957B134130F58AA003601DE /* PBXTextBookmark */;
+			4957B133130F58AA003601DE = 4957B133130F58AA003601DE /* PBXTextBookmark */;
+			4957B134130F58AA003601DE = 4957B134130F58AA003601DE /* PBXTextBookmark */;
 			4969447B127274B3000D91C5 = 4969447B127274B3000D91C5 /* PBXTextBookmark */;
 			49AE43721245AAE400A7EC41 = 49AE43721245AAE400A7EC41 /* PBXTextBookmark */;
 			49BBDFC512B9A75E00383B50 = 49BBDFC512B9A75E00383B50 /* PBXTextBookmark */;
@@ -567,9 +567,9 @@
 	};
 	4955249911A38BF80094D445 /* AudioOutput.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {866, 7657}}";
+			sepNavIntBoundsRect = "{{0, 0}, {866, 8164}}";
 			sepNavSelRange = "{1399, 0}";
-			sepNavVisRange = "{8808, 1108}";
+			sepNavVisRange = "{12661, 865}";
 			sepNavWindowFrame = "{{146, 47}, {581, 742}}";
 		};
 	};
