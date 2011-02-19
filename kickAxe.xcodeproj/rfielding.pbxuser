@@ -12,7 +12,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {821, 767}}";
 			sepNavSelRange = "{324, 0}";
-			sepNavVisRange = "{0, 917}";
+			sepNavVisRange = "{0, 914}";
 			sepNavWindowFrame = "{{124, 110}, {890, 700}}";
 		};
 	};
@@ -81,7 +81,7 @@
 		activeArchitecturePreference = armv7;
 		activeBuildConfigurationName = Release2;
 		activeExecutable = 491E0D20116D4DD1003B7B47 /* mugician */;
-		activeSDKPreference = iphoneos4.2;
+		activeSDKPreference = iphonesimulator4.2;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* mugician */;
 		addToTargets = (
 			1D6058900D05DD3D006BFB54 /* mugician */,
@@ -310,8 +310,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 318912252;
-			PBXWorkspaceStateSaveDate = 318912252;
+			PBXPerProjectTemplateStateSaveDate = 319772819;
+			PBXWorkspaceStateSaveDate = 319772819;
 		};
 		perUserProjectItems = {
 			49018A4912C2E63D002EB130 = 49018A4912C2E63D002EB130 /* PBXTextBookmark */;
@@ -323,6 +323,8 @@
 			491C79D7123F131F00746A81 = 491C79D7123F131F00746A81 /* PBXTextBookmark */;
 			493A9CC81213768A00693BC9 = 493A9CC81213768A00693BC9 /* PBXTextBookmark */;
 			493A9CDF121378DE00693BC9 = 493A9CDF121378DE00693BC9 /* PBXTextBookmark */;
+			4957B133130F58AA003601DE /* PBXTextBookmark */ = 4957B133130F58AA003601DE /* PBXTextBookmark */;
+			4957B134130F58AA003601DE /* PBXTextBookmark */ = 4957B134130F58AA003601DE /* PBXTextBookmark */;
 			4969447B127274B3000D91C5 = 4969447B127274B3000D91C5 /* PBXTextBookmark */;
 			49AE43721245AAE400A7EC41 = 49AE43721245AAE400A7EC41 /* PBXTextBookmark */;
 			49BBDFC512B9A75E00383B50 = 49BBDFC512B9A75E00383B50 /* PBXTextBookmark */;
@@ -440,11 +442,6 @@
 		name = AudioOutput.h;
 		path = /Users/rfielding/cocoa/kickAxe/Classes/AudioOutput.h;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {821, 676}}";
-			sepNavSelRange = "{165, 0}";
-			sepNavVisRange = "{195, 1078}";
-		};
 	};
 	491C79D7123F131F00746A81 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -576,6 +573,26 @@
 			sepNavWindowFrame = "{{146, 47}, {581, 742}}";
 		};
 	};
+	4957B133130F58AA003601DE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* kickAxeAppDelegate.m */;
+		name = "kickAxeAppDelegate.m: 18";
+		rLen = 0;
+		rLoc = 324;
+		rType = 0;
+		vrLen = 917;
+		vrLoc = 0;
+	};
+	4957B134130F58AA003601DE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* kickAxeAppDelegate.m */;
+		name = "kickAxeAppDelegate.m: 18";
+		rLen = 0;
+		rLoc = 324;
+		rType = 0;
+		vrLen = 914;
+		vrLoc = 0;
+	};
 	4969447B127274B3000D91C5 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 49D73C0F1218DF980042E8BD /* mugician.presets */;
@@ -592,11 +609,6 @@
 		name = AudioOutput.m;
 		path = /Users/rfielding/cocoa/kickAxe/Classes/AudioOutput.m;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {821, 8177}}";
-			sepNavSelRange = "{456, 0}";
-			sepNavVisRange = "{0, 935}";
-		};
 	};
 	49AE43721245AAE400A7EC41 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
