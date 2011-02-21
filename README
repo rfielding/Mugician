@@ -27,7 +27,11 @@ DISCLAIMER:
 
 This code is NUTS.  Much was decided in just a few days after I got my iPad and figured out AudioQueue.  It was rushed to reach the international deadline for iPads to come out.  Then there was a very long time... months... of simply tweaking magic numbers with headphones on.  Those months were followed by simply practicing without coding, and waiting for good musicians to emerge.  The UI is quite hard-coded, and it's not completely necessary for me to have done this.
 
-My new Instrument Pythagoras normalizes the renderer coordinates around { <-1,-1>, <1,1> } and moves the controls out into UIKit.  Surprisingly, it didn't affect latency too much to do this.  I am trying to make libpd work in that code, but I can't get the latency anywhere near where it needs to be.  The buffer latency is very low, but sending changes out to the synth are apparently queueing up.  I can compare side-by-side with Mugician's engine, and the difference is very obvious.  It might be purely my mistake though.  If you know libpd well, please contact me if you think you can help with Pythagoras.
+My new Instrument Pythagoras normalizes the renderer coordinates around { <-1,-1>, <1,1> } and moves the controls out into UIKit.  Surprisingly, it didn't affect latency too much to do this.  I am trying to make libpd work in that code, but I can't get the latency anywhere near where it needs to be.  The buffer latency is very low, but sending changes out to the synth are apparently queueing up.  I can compare side-by-side with Mugician's engine, and the difference is very obvious.  It might be purely my mistake though.  If you know libpd well, please contact me if you think you can help with Pythagoras.  This is Pythagoras:
+
+http://www.youtube.com/watch?v=2X9AqiUVF_U
+
+It is a lot like Mugician, except internally the code is much cleaner, it's tuned to physical rather than diatonic fourths, and because of that, I am able to show microtonal markers that capture what is going on in the patterns of the spectrum.
 
 TODO:
 
