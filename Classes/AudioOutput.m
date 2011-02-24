@@ -1,9 +1,7 @@
-
 #import "AudioOutput.h"
 #import <AudioUnit/AudioUnitProperties.h>
 #import <AudioUnit/AudioOutputUnit.h>
 #import <AudioToolbox/AudioServices.h>
-
 
 //vol x 2, lpf 0.75 -> 0.50
 @implementation AudioOutput
@@ -52,9 +50,9 @@ static float currentVol[FINGERS];
 static float targetPan[FINGERS];
 static float currentPan[FINGERS];
 
+static BOOL soundEnginePaused = NO;
+
 #define sinFast sinf 
-
-
 
 static inline SInt32 limiter(float x)
 {
@@ -426,12 +424,117 @@ static OSStatus playCallback(void *inRefCon,
 	return self;
 }
 
+// Set Audio Session category
+- (BOOL)audioSessionSetCategory:(NSString*)category
+{
+	NSError *categoryError = nil;
+	AVAudioSession *session = [AVAudioSession sharedInstance];
+	if (![session setCategory:category error:&categoryError]) 
+	{
+		//Failed
+		NSLog(@"Error setting Audio session category %@: %@", 
+			 category, categoryError.localizedDescription);
+		return NO;
+	}
+	
+	NSLog(@"Audio session category %@ set successfully", category);
+	
+	UInt32 allowMixing = true;
+	OSStatus result = AudioSessionSetProperty (kAudioSessionProperty_OverrideCategoryMixWithOthers,
+											   sizeof (allowMixing), &allowMixing);
+	if (result)	
+	{
+		NSLog(@"ERROR enabling audio mixing: %d", result);
+	}
+	
+	return YES;
+} 
+
+// Set Audio session active or inactive
+- (BOOL)audioSessionSetActive:(BOOL)active 
+{
+	NSError *activationError = nil;
+	if ([[AVAudioSession sharedInstance] setActive:active error:&activationError]) 
+	{
+		NSLog(@"Audio session set active %@ succeeded", active ? @"YES" : @"NO");
+		return YES;
+	} 
+	else 
+	{	//Failed
+		
+		NSLog(@"ERROR setting Audio session active %@: %@", active ? @"YES" : @"NO", 
+			 activationError.localizedDescription);
+		return NO;
+	}
+}
+
+// Begin Interruption handler. NOTE: Audio session is already de-activated at this point
+- (void)beginInterruption
+{	
+	if (soundEnginePaused)
+	{
+		// nothing to do
+		NSLog(@"beginInterruption: sound engine already paused, exiting");
+		return;
+	}
+	
+    NSLog(@"Audio session interrupted"); 
+	
+	// Set flag
+	soundEnginePaused = YES;
+	
+	// Do any Audio unit teardown, save state, etc. if needed
+}
+
+// Interruption resume handler for iOS4 and later
+- (void)endInterruptionWithFlags:(NSUInteger)flags
+{			
+	if (!soundEnginePaused)		
+		return; // nothing to do
+	
+	// NOTE: The AVAudioSessionInterruptionFlags_ShouldResume indicates whether the app 
+	// should resume playback as per the HIG	
+	if (flags != AVAudioSessionInterruptionFlags_ShouldResume)
+	{
+		NSLog(@"AVAudioSessionInterruptionFlags_ShouldResume set to NO");
+		// Possible about re-activate here
+	}
+		
+	NSLog(@"Audio session resuming"); 
+	
+	// Re-activate Audio Session first
+	[self audioSessionSetActive:YES];
+	
+	soundEnginePaused = NO;
+}
+
+// Interruption resume handler for iOS 3.x (pre-iOS4)
+- (void)endInterruption
+{	
+	[self endInterruptionWithFlags:AVAudioSessionInterruptionFlags_ShouldResume];
+}
+
 - (void) start {
   stride = 1024;
   bufferSamples = 256;
   minimumFrequency = 100000;
   totalSamples = 0;
   OSStatus status;
+	
+  // Set audio session category and make it active
+  [self audioSessionSetCategory:AVAudioSessionCategoryPlayback];
+  [self audioSessionSetActive:YES];
+	
+	// Register observer to be notified when application is suspended
+	[[NSNotificationCenter defaultCenter] addObserver:self 
+											 selector:@selector(beginInterruption) 
+												 name:UIApplicationDidEnterBackgroundNotification object:nil];
+	
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self 
+											 selector:@selector(endInterruption) 
+												 name:UIApplicationDidBecomeActiveNotification object:nil];		
+	
   // Describe audio component
   AudioComponentDescription desc;
   desc.componentType = kAudioUnitType_Output;

@@ -1,6 +1,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioUnit/AUComponent.h>
+#import <AVFoundation/AVAudioSession.h>
 
 #define FINGERS 10
 
@@ -29,7 +30,7 @@ unsigned int totalSamples;
 AudioComponentInstance audioUnit;
 AudioStreamBasicDescription audioFormat;
 
-@interface AudioOutput : NSObject {
+@interface AudioOutput : NSObject <AVAudioSessionDelegate> {
  @private
 }
 
