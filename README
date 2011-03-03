@@ -1,3 +1,5 @@
+Seriously, read the License at the bottom and make an attempt to follow it.  You can have your app removed from the store, or your developer certificate revoked if Apple deems you to be a bad actor in the app store for any reason.  Remember that Apple doesn't need any sort of legal reason to remove you.  They can remove you because they think of you as a "crap" developer, or a malware creation risk, or just because you are a dick that is violating copyright or causing problems.  The developer hwaldo tried to pass this program (with his splash screen and icon added) as his own, explicitly avoiding giving this project any credit.  Until he complies, he will have to put up with lots of bad things being said about his company.  Hopefully, other developers will discover that he is doing this to them and will follow suit.  Fat chance on anything he submits ever getting any love from app reviewers.  I have talked to quite a few of them, who would now prejudge anything from hwaldo as bad.
+
 WHAT IS IT?:
 
 I suggest that you read the manual for the instrument:
@@ -7,9 +9,7 @@ http://rrr00bb.blogspot.com/2010/08/mugician-heiroglyphics.html
 
 THE INSTRUMENT:
 
-This is what Mugician is capable of (at least!).  I have professional musicians using it on a daily basis. 
-It has appeared on Underoath's Disambiguation, Gorillaz 'The Fall', JordanRudess+ProjectRnL collaboration,
-have seen live footage by Ekoostik Hookah, White Rainbow, Michael Atonal Vick, etc.  I even have at least one group (Army Of The Hollow) working on an orchestra of Mugicians, in this case, a Black Metal Microtonal Maqam orchestra(!)   I have been told that it is becoming a bit of a standard among fretless guitar players.  A lot of people will be mad if we fill it full of useless junk that's not related to making a playable instrument.  This is what I mean by 'playable':
+This is what Mugician is capable of (at least!).  I have professional musicians using it on a daily basis.   It has appeared on Underoath's Disambiguation, Gorillaz 'The Fall', JordanRudess+ProjectRnL collaboration, have seen live footage by Ekoostik Hookah, White Rainbow, Michael Atonal Vick, etc.  I even have at least one group (Army Of The Hollow) working on an orchestra of Mugicians, in this case, a Black Metal Microtonal Maqam orchestra(!)   I have been told that it is becoming a bit of a standard among fretless guitar players.  A lot of people will be mad if we fill it full of useless junk that's not related to making a playable instrument.  This is what I mean by 'playable':
  
 http://www.youtube.com/watch?v=psKLWzTZveg
 
@@ -35,11 +35,7 @@ It is a lot like Mugician, except internally the code is much cleaner, it's tune
 
 TODO:
 
-There is a bug that arises in many instruments as of iOS4.2 in which sound can be lost in a running app when awaking from sleep.  Anybody that knows the cause, please tell me what you know.  
-
-I am also getting a short skipping sound when switching between background apps (specifically Bloom and iTablaPro), and apparently I need to just get some AudioSession property set right and I will be able to switch between them without the gap.  That gap prevents me from going into the background drum machine to tweak something before running back into the foreground with Mugician.
-
-Also, any Max/MSP or Pd users out there: a useful utility would be one that takes the left sound channel and the right sound channel and computes the latency in milliseconds in the peak between the two (ie: left is acoustic mic of the ipad, while right is an electronic line in from the ipad) in order to get real statistical information on latency and jitter.  There needs to be a catalog of applications with these numbers up against the features that probably influenced this outcome.  At the moment, I am doing this task by eye in a very painfully slow way.  I bring up the waveform in an editor and eyeball the stereo version of the waveform and figure out latency for a few points.  This doesn't allow me to accurately get jitter numbers.  It also makes it too hard to do this against a large number of applications.
+Any Max/MSP or Pd users out there: a useful utility would be one that takes the left sound channel and the right sound channel and computes the latency in milliseconds in the peak between the two (ie: left is acoustic mic of the ipad, while right is an electronic line in from the ipad) in order to get real statistical information on latency and jitter.  There needs to be a catalog of applications with these numbers up against the features that probably influenced this outcome.  At the moment, I am doing this task by eye in a very painfully slow way.  I bring up the waveform in an editor and eyeball the stereo version of the waveform and figure out latency for a few points.  This doesn't allow me to accurately get jitter numbers.  It also makes it too hard to do this against a large number of applications.
 
 
 LICENSE: 
