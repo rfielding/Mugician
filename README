@@ -55,7 +55,7 @@ If you submit something to Apple, at least change the name and app id, and MAKE 
 
 5) Any versions that you add into the store shall be buildable from a branch of this Mugician project and hosted in this repository on github, with only one exception:  If you have a compelling reason why you cannot do this, then contact me and I can write in an exception for you.  This exception will be version controlled in this README file for all to see, with my name on the commit.  
 
-6) I don't want a leech developer posting a malware, nagware, or adware version of this instrument under any circumstances.  If I suspect that something bad has been inserted into a Mugician derived project, I will buy one copy and open it up in a hex editor and monitor the ipad for network traffic, and all your time spent learning iOS dev will end up being a waste if you get caught inserting malware into other people's stuff.  If this is what you plan to do, then I suggest that you pick a safer project to do it to than mine.
+6) I don't want a leech developer posting a malware, nagware, or adware version of this instrument under any circumstances.  If I suspect that something bad has been inserted into a Mugician derived project, I will buy one copy and open it up in a hex editor and monitor the ipad for network traffic, and all your time spent learning iOS dev will end up being a waste if you get caught inserting malware into other people's stuff, because Apple will not tolerate bad actors in the dev community because there are already too many developers submitting apps.  If this is what you plan to do, then I suggest that you pick a safer project to do it to than mine.
 
 
 
