@@ -45,7 +45,7 @@ LICENSE:
 You can submit changes to this repository, but please do it on your own branch for my sanity's sake.  
 If you submit something to Apple, at least change the name and app id, and MAKE SURE that your app and Mugician can be co-installed on the same iPad.
 
-1) Give me credit for your code being a fork of "the Mugician free open source project".  Credit must be posted in your app description so that you cannot avoid mentioning the existence of the free version of Mugician in your app description.
+1) Give me credit for your code being a fork of "the Mugician free open source project".  Credit must be posted in your app description so that you cannot avoid mentioning the existence of the free version of Mugician in your app description.  I know that it sounds hard to sell a paid version of something that is free.  But that is the whole point of it.  If you contribute something really cool to my source code tree, then by all means go ahead and sell your own fork of Mugician as your reward.  Some things that you want to fold in to your project I won't want to fold into mine, but I think it's fair that if you use my program that you give me the option of using your innovations unless you can convince me to write and agreement to free you of that obligation.
 
 2) DON'T BREAK MY EXISTING MUGICIAN USERS PLEASE.  
 
