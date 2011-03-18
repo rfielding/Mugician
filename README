@@ -64,3 +64,11 @@ NOTE:
 You cannot submit this as it is to the Apple Store even if you changed the name and app id.  It does things that need to be commented out before you can do a submit to Apple.
 
 Contact me at rob.fielding@gmail.com for details.
+
+
+
+MISCELLANEOUS:
+
+I am hijacking github for a static web files site.  So here's some URLs that people with authorized iPads can install
+
+<a href="itms-services://?action=download-manifest&url=https://github.com/rfielding/Mugician/downloads/Pythagoras-0.15.16.plist">Pythagoras v0.15p16</a>
