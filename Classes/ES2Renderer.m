@@ -5,15 +5,42 @@
 //  Created by Robert Fielding on 4/7/10.
 //  Copyright Check Point Software 2010. All rights reserved.
 //
+//  Visual polish and various bug fixes added by Gavin Norton on 2011-06-16
+//  Color choices derived from http://www.colorjack.com/sphere/ Six-Tone (CCW) with hue 36, sat 82 and bal 100
+//
 
 //#import <CoreGraphics/CoreGraphics.h>
 
 #import "ES2Renderer.h"
 
-#define NOTECOUNT 12
+static int SPLIT_COUNT = 12;
+#define SLIDER_COUNT 12
 
-static float NoteStates[NOTECOUNT];
-static float MicroStates[NOTECOUNT];
+#define NOTE_COUNT 12
+#define kOctaveFactor 2.0
+static const int NoteColors[NOTE_COUNT] = {1,0,1, 1,0,1,0,1, 1,0,1,0}; //color pattern starting on 'A', for 12EDO
+#define VERTICAL_STEP_SIZE 5        // step distance between "strings"
+#define NOTE_OFFSET  3              // shifts layout and sounds on entire surface by this many steps. 3 is original Mugician layout
+
+//#define NOTE_COUNT 10
+//#define kOctaveFactor 2.0
+//static const int NoteColors[NOTE_COUNT] = {1,0,1, 1,0,1,0,1, 1,0}; //color pattern starting on 'A', for 10EDO
+//#define VERTICAL_STEP_SIZE 4        // step distance between "strings"
+//#define NOTE_OFFSET  3              // shifts layout and sounds on entire surface by this many steps.
+
+//#define NOTE_COUNT 13
+//#define kOctaveFactor 3.0
+//static const int NoteColors[NOTE_COUNT] = {1,0,1, 1,0,1,0,1, 1,0,1,0,1}; //color pattern starting on 'A', for13TET Bohlen-Pierce
+//#define VERTICAL_STEP_SIZE 5        // step distance between "strings"
+//#define NOTE_OFFSET  -26            // shifts layout and sounds on entire surface by this many steps.
+
+#define kMiddleAFrequency 440.0
+#define center1DNoteAdjustment ((1.0-(SPLIT_COUNT%2))/2.0)
+#define center2DNoteAdjustment center1DNoteAdjustment*center1DNoteAdjustment
+#define kMiddleANote  (0.25*SPLIT_COUNT*SPLIT_COUNT)+center2DNoteAdjustment-NOTE_COUNT+2.0
+
+static float NoteStates[NOTE_COUNT];
+static float MicroStates[NOTE_COUNT];
 
 // The pixel dimensions of the CAEAGLLayer
 static GLint backingWidth;
@@ -21,11 +48,6 @@ static GLint backingHeight;
 static float inverseBackingWidth;
 static float inverseBackingHeight;
 static unsigned int tickCounter=0;
-
-#define kNotesPerOctave 12.0
-#define kMiddleAFrequency 440.0
-#define kMiddleANote  48.0
-
 
 #define SLIDER0 0.5
 #define SLIDER1 0.79296875
@@ -37,7 +59,7 @@ static unsigned int tickCounter=0;
 #define SLIDER7 0.0
 #define SLIDER8 0.400000006
 #define SLIDER9 0.5
-#define SLIDER10 0.1
+#define SLIDER10 0.0
 #define SLIDER11 0.1
 
 #define SL_MVOL 0
@@ -52,22 +74,85 @@ static unsigned int tickCounter=0;
 #define SL_POLY 9
 #define SL_PRESET 10
 #define SL_LOCK 11
+/*
+static const int SliderColors[SLIDER_COUNT][3] = {
+    {125,   0, 125}, // deep purple
+    {  0, 125, 125}, // deep teal
+    {125, 125,   0}, // deep olive
+    {150,  68, 150}, // purple
+    {150,  68, 150}, // purple
+    {  0, 125, 125}, // deep teal
+    {  0, 125, 125}, // deep teal
+    {  0, 125, 125}, // deep teal
+    {150,  68, 150}, // purple
+    { 68, 150, 150}, // teal
+    {150, 150,  68}, // olive
+    {125, 125,   0}, // deep olive
+};
+*/
+static const GLfloat SliderColors[SLIDER_COUNT][3] = {
+//    {255, 171,  46}, // orange
+//    { 46, 255, 171}, // green
+//    { 67,  46, 255}, // blue
+//    {171,  46, 255}, // purple
+//    {255,  67,  46}, // red
+
+    { 67,  46, 255}, // blue
+    {255, 171,  46}, // orange
+    { 46, 255, 171}, // green
+    {171,  46, 255}, // purple
+    {171,  46, 255}, // purple
+    {255, 171,  46}, // orange
+    {255, 171,  46}, // orange
+    {255, 171,  46}, // orange
+    {255,  67,  46}, // red
+    {255,  67,  46}, // red
+    {255,  67,  46}, // red
+    {255,  67,  46}, // red
+};
+
+#define SL_LOCK_THRESHOLD 0.5
+static const int PadlockXColorRGB[3] = {255, 255,  255};
+#define NUM_PRESETS    12  // may have to be 12 or smaller (if raised, this code needs more letter rendering code)
 
 #define TOUCHQUEUELEN (FINGERS)
 
 #define POLYPHONYMAX 8
-
-#define SLIDERCOUNT 12
-#define SPLITCOUNT 12
-#define SNAPCONTROL 7
+#define SL_POLY_1_THRESHOLD 0.33
+#define SL_POLY_2_THRESHOLD 0.66
 
 #define ACTIVECONTROL_PLAYAREA -1
 #define ACTIVECONTROL_NOTHING -2
 
-#define NOTEFONTSIZE 0.05
-#define NOTEFONTTRANSPARENCY 0.5
+#define NOTEFONT_SIZE 0.05
+#define NOTEFONT_TRANSPARENCY 0.3 // was 0.5
+
+static const GLfloat GradientColors[4] = {255, 255, 255, 127};
+#define GRADIENT_FADE 0.5
+
+static const GLfloat WhiteButtonColors[4] = { 40,  40,  40, 127};
+static const GLfloat BlackButtonColors[4] = { 24,  24,  24, 127};
+static const GLfloat MicroButtonColors[4] = {255,  67,  46, 200};
+static const GLfloat WhiteButtonHilite[4] = { 67,  46, 255, 127};
+static const GLfloat BlackButtonHilite[4] = {255, 171,  46, 127};
+static const GLfloat FretLineColorsRGBA[3][4] = {
+    {255, 255, 255, 32},
+    {255, 255, 255, 32},
+    {  0,   0,   0, 32},
+};
+static const GLfloat TrackLineColorsRGBA[3][4] = {
+    {  0,   0,   0, 127},
+    {255,  67,  46, 48}, 
+};
+#define kButtonLBFactor 0.1    // was 0.50
+#define kButtonRBFactor 0.1    // was 0.25
 
 #define DEFAULT_PRESSURE 0.5
+
+#define FINGER_A 127   // was 150
+
+#define kNoteFadeRGBFactor 0.95 // was 0.98
+
 
 static AudioOutput* lastAudio;
 
@@ -77,13 +162,13 @@ static float SnapAdjustH[TOUCHQUEUELEN];
 static int activeControl[TOUCHQUEUELEN]; //-1 is the main area, above that is a ref to a slider
 static int currentControl = ACTIVECONTROL_NOTHING;
 
-static float SliderFileValues[SLIDERCOUNT][SLIDERCOUNT];
-static float SliderValues[SLIDERCOUNT][SLIDERCOUNT];
+static float SliderFileValues[NUM_PRESETS][SLIDER_COUNT];
+static float SliderValues[NUM_PRESETS][SLIDER_COUNT];
 static unsigned int SliderPreset = SLIDER10;
 //static float SliderAdjustH[SLIDERCOUNT];
 
-static float bounceX=0;
-static float bounceY=0;
+static float bounceX =0.0;
+static float bounceY =0.0;
 static float bounceDX=0.1;
 static float bounceDY=0.1;
 
@@ -132,21 +217,21 @@ void WritePreferences()
 	[str appendFormat:@"%d\n", susiNgPanalo==NULL?0:1973];
 	
 	//Update the slider file values
-	for(unsigned int preset=0; preset < SLIDERCOUNT; preset++)
+	for(unsigned int preset=0; preset < NUM_PRESETS; preset++)
 	{
 		//*Locked* values overwrite what goes out to file
-		if(SliderValues[preset][SL_LOCK] > 0.5)
+		if(SliderValues[preset][SL_LOCK] > SL_LOCK_THRESHOLD)
 		{
-			for(unsigned int slider=0; slider < SLIDERCOUNT; slider++)
+			for(unsigned int slider=0; slider < SLIDER_COUNT; slider++)
 			{
 				SliderFileValues[preset][slider] = SliderValues[preset][slider];
 			}
 		}
 	}
 	//Append a list of floats, one for each preset
-	for(unsigned int preset=0; preset < SLIDERCOUNT; preset++)
+	for(unsigned int preset=0; preset < NUM_PRESETS; preset++)
 	{
-		for(unsigned int slider=0; slider < SLIDERCOUNT; slider++)
+		for(unsigned int slider=0; slider < SLIDER_COUNT; slider++)
 		{
 			[str appendFormat:@"%f ", SliderFileValues[preset][slider] ];			
 			//NSLog(@"w: %d,%d -> %f",preset,slider, SliderValues[preset][slider]);
@@ -164,22 +249,21 @@ void WritePreferences()
 	[data writeToFile:appFile atomically:YES];
 }
 
-
 void SyncWithPreset(unsigned int preset)
 {
-	[lastAudio setMaster: SliderValues[preset][0]]; 
-	[lastAudio setReverb: SliderValues[preset][1]]; 
-	[lastAudio setGain: SliderValues[preset][2]]; 
-	[lastAudio setPower: SliderValues[preset][3]]; 
-	[lastAudio setFM1: SliderValues[preset][4]]; 
-	[lastAudio setDelayTime: SliderValues[preset][5]]; 
-	[lastAudio setDelayFeedback: SliderValues[preset][6]]; 
-	[lastAudio setDelayVolume: SliderValues[preset][7]]; 
+	[lastAudio setMaster: SliderValues[preset][SL_MVOL]]; 
+	[lastAudio setReverb: SliderValues[preset][SL_REVERB]]; 
+	[lastAudio setGain: SliderValues[preset][SL_ATANDIST]]; 
+	[lastAudio setPower: SliderValues[preset][SL_OCTAVE]]; 
+	[lastAudio setFM1: SliderValues[preset][SL_FMDIST]]; 
+	[lastAudio setDelayTime: SliderValues[preset][SL_ECHOPERIOD]]; 
+	[lastAudio setDelayFeedback: SliderValues[preset][SL_ECHOFEEDBACK]]; 
+	[lastAudio setDelayVolume: SliderValues[preset][SL_ECHOVOL]]; 
 }
 
 void SetValueForFingerControl(const unsigned int slider, const float v, const unsigned int isSwitching)
 {
-	const unsigned int isLocked = (SliderValues[SliderPreset][SL_LOCK] > 0.5) && !isSwitching;
+	const unsigned int isLocked = (SliderValues[SliderPreset][SL_LOCK] > SL_LOCK_THRESHOLD) && !isSwitching;
 	switch(slider)
 	{
 		case SL_MVOL: {
@@ -261,8 +345,8 @@ void SetValueForFingerControl(const unsigned int slider, const float v, const un
 			break;
 		}
 		case SL_PRESET: {
-			unsigned int oldV = (int)SliderValues[SliderPreset][SL_PRESET]*12;				
-			unsigned int newV = (int)(12*v*0.99); 
+			unsigned int oldV = (int)(1.0*SliderValues[SliderPreset][SL_PRESET]*NUM_PRESETS)-1;				
+			unsigned int newV = (int)(1.0*NUM_PRESETS*v)-1; 
 			SliderValues[SliderPreset][SL_PRESET]=v; 					
 			if(oldV != newV)
 			{
@@ -276,8 +360,8 @@ void SetValueForFingerControl(const unsigned int slider, const float v, const un
 			break;
 		}
 		case SL_LOCK: {
-			unsigned int oldLocked = SliderValues[SliderPreset][SL_LOCK] > 0.5;
-			unsigned int newLocked = v > 0.5;
+			unsigned int oldLocked = SliderValues[SliderPreset][SL_LOCK] > SL_LOCK_THRESHOLD;
+			unsigned int newLocked = v > SL_LOCK_THRESHOLD;
 			SliderValues[SliderPreset][SL_LOCK]=v; 
 			if(oldLocked != newLocked && !isSwitching && newLocked)
 			{
@@ -358,11 +442,10 @@ void ReadPreferences()
 			{
 				makeAdjustments();
 			}
-			if(SliderPreset < 0)SliderPreset = 0;
-			if(SliderPreset >= SLIDERCOUNT)SliderPreset = SLIDERCOUNT-1;
-			for(unsigned int preset=0; preset < SLIDERCOUNT; preset++)
+			if(SliderPreset >= SLIDER_COUNT)SliderPreset = SLIDER_COUNT-1;
+			for(unsigned int preset=0; preset < SLIDER_COUNT; preset++)
 			{
-				for(unsigned int slider=0; slider < SLIDERCOUNT; slider++)
+				for(unsigned int slider=0; slider < SLIDER_COUNT; slider++)
 				{
 					//Protect against garbage data
 					[scanner scanFloat:&SliderFileValues[preset][slider]];
@@ -378,7 +461,7 @@ void ReadPreferences()
 	else
 	{
 		//Just put in some defaults
-		for(unsigned int i=0;i<SLIDERCOUNT;i++)
+		for(unsigned int i=0;i<NUM_PRESETS;i++)
 		{
 			SliderFileValues[i][0] = SliderValues[i][0] = SLIDER0;
 			SliderFileValues[i][1] = SliderValues[i][1] = SLIDER1;
@@ -490,8 +573,8 @@ static inline BOOL NothingTouched()
 
 void ComputeMaxNotes()
 {
-	const BOOL useKeyboardRules = SliderValues[SliderPreset][SL_POLY] < 0.25;
-	const BOOL useKeyboardRulesPerString = !useKeyboardRules && SliderValues[SliderPreset][SL_POLY] < 0.75;
+	const BOOL useKeyboardRules = SliderValues[SliderPreset][SL_POLY] < SL_POLY_1_THRESHOLD;
+	const BOOL useKeyboardRulesPerString = !useKeyboardRules && SliderValues[SliderPreset][SL_POLY] < SL_POLY_2_THRESHOLD;
 	if(useKeyboardRulesPerString)
 	{
 		//Nobody is max note yet...
@@ -503,9 +586,9 @@ void ComputeMaxNotes()
 				touchIsMaxNote[t] = (touchPhase[t] == UITouchPhaseBegan && activeControl[t]<0);
 			}
 		}	
-		long maxNoteNumber[SPLITCOUNT];
-		int maxTouch[SPLITCOUNT];
-		for(unsigned int s=0; s<SPLITCOUNT; s++)
+		long maxNoteNumber[SPLIT_COUNT];
+		int maxTouch[SPLIT_COUNT];
+		for(unsigned int s=0; s<SPLIT_COUNT; s++)
 		{
 			maxNoteNumber[s] = -1;
 			maxTouch[s] = -1;
@@ -515,7 +598,7 @@ void ComputeMaxNotes()
 		{
 			if(NULL != touchQueue[t]) 
 			{
-				int s = (int)(SPLITCOUNT-(1.0*SPLITCOUNT * touchPoint[t].y)*inverseBackingHeight);
+				int s = (int)(SPLIT_COUNT-(1.0*SPLIT_COUNT * touchPoint[t].y)*inverseBackingHeight);
 				int ourNoteNumber = touchNoteNumber[t];
 				if(activeControl[t]<0 && maxNoteNumber[s] < ourNoteNumber)
 				{
@@ -525,7 +608,7 @@ void ComputeMaxNotes()
 			}
 		}	
 		//TODO: if goofball turns on more than 6 notes we are doomed
-		for(unsigned int s=0; s<SPLITCOUNT; s++)
+		for(unsigned int s=0; s<SPLIT_COUNT; s++)
 		{
 			if(maxTouch[s] >= 0)
 			{
@@ -634,7 +717,7 @@ static inline void* FindTouchByIndex(const unsigned int idx)
 
 static inline float GetFrequencyForNote(const float note) 
 {
-	return kMiddleAFrequency * powf(2, (note - kMiddleANote) / kNotesPerOctave);
+	return kMiddleAFrequency * powf(kOctaveFactor, (note - kMiddleANote) / (1.0*NOTE_COUNT));
 }
 
 // uniform index
@@ -658,7 +741,7 @@ void TouchesInit()
 {
 	for(unsigned int i=0;i<FINGERS;i++)
 	{
-		activeControl[i]=-2;
+		activeControl[i]=ACTIVECONTROL_PLAYAREA;
 		touchQueue[i] = NULL;
 		touchMe[i] = 0;
 		touchMe[i] = 0;
@@ -670,7 +753,7 @@ void TouchesInit()
 
 static inline void ButtonStatesInit()
 {
-	for(unsigned int i=0;i<NOTECOUNT;i++)
+	for(unsigned int i=0;i<NOTE_COUNT;i++)
 	{
 		NoteStates[i]=0;
 		MicroStates[i]=0;
@@ -679,7 +762,7 @@ static inline void ButtonStatesInit()
 
 void TrackFingerChange(const unsigned int touchIndex,const float v,const BOOL isBegin)
 {
-	if(activeControl[touchIndex]==-1)
+	if(activeControl[touchIndex]==ACTIVECONTROL_PLAYAREA)
 	{
 		//Turn off quiet notes
 		if(touchIsMaxNote[touchIndex]==0)
@@ -690,10 +773,10 @@ void TrackFingerChange(const unsigned int touchIndex,const float v,const BOOL is
 		else 
 		{
 			const CGPoint point = FindPointByIndex(touchIndex);
-			const float ifl = (1.0*SPLITCOUNT * (point.x+SnapAdjustH[touchIndex]))*inverseBackingWidth;
-			const float jfl = SPLITCOUNT-(1.0*SPLITCOUNT * point.y)*inverseBackingHeight;
+			const float ifl = (1.0*SPLIT_COUNT * (point.x+SnapAdjustH[touchIndex]))*inverseBackingWidth;
+			const float jfl = SPLIT_COUNT-(1.0*SPLIT_COUNT * point.y)*inverseBackingHeight;
 			
-			const float n = ((int)jfl)*5 + ifl  -24 - 0.8 - 0.05;
+			const float n = ((int)jfl)*VERTICAL_STEP_SIZE + ifl - kOctaveFactor*SPLIT_COUNT - NOTE_OFFSET;
 			const float f = GetFrequencyForNote(n);
 			const float h = (jfl-((int)jfl));
 			const float tm = touchMe[touchIndex];
@@ -708,7 +791,7 @@ void TrackFingerChange(const unsigned int touchIndex,const float v,const BOOL is
 			[lastAudio setNote:f forFinger: touchIndex isAttack: isBegin];	
 			[lastAudio setVol:v*press forFinger: touchIndex];	
 			[lastAudio setHarmonics:h forFinger: touchIndex];
-			[lastAudio setPan:(ifl/SPLITCOUNT) forFinger: touchIndex];
+			[lastAudio setPan:(ifl/SPLIT_COUNT) forFinger: touchIndex];
 			//NSLog(@"%f",press);
 			
 			if(isBegin)
@@ -754,7 +837,7 @@ void RecheckFingers()
 	{
 		if( touchPhase[t] == UITouchPhaseBegan )
 		{
-			const float jfl = SPLITCOUNT-(1.0*SPLITCOUNT * touchPoint[t].y)*inverseBackingHeight;
+			const float jfl = SPLIT_COUNT-(1.0*SPLIT_COUNT * touchPoint[t].y)*inverseBackingHeight;
 			if(jfl > 1)
 			{
 				touchPhase[t] = UITouchPhaseMoved;
@@ -766,10 +849,10 @@ void RecheckFingers()
 
 static inline void FadeNotes()
 {
-	for(unsigned int n=0;n<NOTECOUNT;n++)
+	for(unsigned int n=0;n<NOTE_COUNT;n++)
 	{
-		NoteStates[n] *= 0.98;
-		MicroStates[n] *= 0.98;
+		NoteStates[n] *= kNoteFadeRGBFactor;
+		MicroStates[n] *= kNoteFadeRGBFactor;
 	}
 }
 
@@ -788,9 +871,9 @@ void ButtonsTrack()
 			const UITouchPhase phase = FindPhaseByIndex(touchIndex);		
 			const CGPoint point = FindPointByIndex(touchIndex);
 			
-			const float ifl = (1.0*SPLITCOUNT * point.x)*inverseBackingWidth;
+			const float ifl = (1.0*SPLIT_COUNT * point.x)*inverseBackingWidth;
 			const int i = (int)ifl;
-			const float jfl = SPLITCOUNT-(1.0*SPLITCOUNT * point.y)*inverseBackingHeight;
+			const float jfl = SPLIT_COUNT-(1.0*SPLIT_COUNT * point.y)*inverseBackingHeight;
 			const int j = (int)jfl;
 			const float di = (ifl-i) - 0.5; 
 			
@@ -799,7 +882,7 @@ void ButtonsTrack()
 			{
 				if(j < 1)
 				{
-					activeControl[touchIndex] = (int)((SLIDERCOUNT* point.x)*inverseBackingWidth);
+					activeControl[touchIndex] = (int)((SLIDER_COUNT* point.x)*inverseBackingWidth);
 				}
 				else 
 				{
@@ -836,11 +919,11 @@ void ButtonsTrack()
 							{
 								qdi = 0;//di-0.25;
 							}
-							SnapAdjustH[touchIndex] = -qdi * (1.0*backingWidth)/SPLITCOUNT;																						
+							SnapAdjustH[touchIndex] = -qdi * (1.0*backingWidth)/SPLIT_COUNT;																						
 						}
 						else 
 						{
-							SnapAdjustH[touchIndex] = -di * (1.0*backingWidth)/SPLITCOUNT;																						
+							SnapAdjustH[touchIndex] = -di * (1.0*backingWidth)/SPLIT_COUNT;																						
 						}
 					}
 					else 
@@ -850,7 +933,7 @@ void ButtonsTrack()
 							float snapSensitivity = (SliderValues[SliderPreset][SL_FRET]-0.25)/3*4;
 							SnapAdjustH[touchIndex] = 
 							(1-snapSensitivity) * SnapAdjustH[touchIndex] +
-							snapSensitivity * -di * (1.0*backingWidth)/SPLITCOUNT;
+							snapSensitivity * -di * (1.0*backingWidth)/SPLIT_COUNT;
 						}
 					}
 					
@@ -862,8 +945,8 @@ void ButtonsTrack()
 				LastJ[touchIndex] = j;		
 				LastI[touchIndex] = ifl;
 				
-				const unsigned int n = (5*j+i)%12;
-				if((j>0) && 0<=n && n<NOTECOUNT)
+				const unsigned int n = (VERTICAL_STEP_SIZE*j+i)%NOTE_COUNT;
+				if((j>0) && n<NOTE_COUNT)
 				{
 					if(di < -0.25 && showMicrotonal)
 					{
@@ -874,7 +957,7 @@ void ButtonsTrack()
 						if(0.25 < di && showMicrotonal) 
 						{
 							//quartersharp
-							MicroStates[(n+1)%NOTECOUNT] = (1+7*MicroStates[(n+1)%NOTECOUNT])/8;
+							MicroStates[(n+1)%NOTE_COUNT] = (1+7*MicroStates[(n+1)%NOTE_COUNT])/8;
 						}
 						else
 						{
@@ -906,15 +989,18 @@ static inline void Vertices2Clear()
 }
 
 ///UNSAFE!!! NO BOUNDS CHECK!!!
+//(all ok now)
 static inline void Vertices2Insert(GLfloat x,GLfloat y,GLubyte r,GLubyte g,GLubyte b,GLubyte a)
 {
-	Vertices2Translated[2*Vertices2Count+0] = x; 
-	Vertices2Translated[2*Vertices2Count+1] = y; 
-	Vertices2Colors[4*Vertices2Count+0] = r; 
-	Vertices2Colors[4*Vertices2Count+1] = g; 
-	Vertices2Colors[4*Vertices2Count+2] = b; 
-	Vertices2Colors[4*Vertices2Count+3] = a; 
-	Vertices2Count++;
+    if (Vertices2Count<SQUAREVERTICESMAX) {
+        Vertices2Translated[2*Vertices2Count+0] = x; 
+        Vertices2Translated[2*Vertices2Count+1] = y; 
+        Vertices2Colors[4*Vertices2Count+0] = r; 
+        Vertices2Colors[4*Vertices2Count+1] = g; 
+        Vertices2Colors[4*Vertices2Count+2] = b; 
+        Vertices2Colors[4*Vertices2Count+3] = a; 
+        Vertices2Count++;
+    }
 }
 
 static inline void Vertices2Render(const int triType)
@@ -928,52 +1014,54 @@ static inline void Vertices2Render(const int triType)
 
 void ButtonRender(const int i,const int j,const float hilite)
 {
-	const GLfloat f = 1.0/SPLITCOUNT;
+	const GLfloat f = 1.0/SPLIT_COUNT;
 	const GLfloat l = 2*((i+0)*f-0.5);
 	const GLfloat r = 2*((i+1)*f-0.5);
 	const GLfloat t = 2*((j+1)*f-0.5);
 	const GLfloat b = 2*((j+0)*f-0.5);
-	const int n = (j*5+(i+9))%12;
-	const int isWhite = (n==0 || n==2 || n==3 || n==5 || n==7 || n==8 || n==10);
+	const int n = (j*VERTICAL_STEP_SIZE+i-NOTE_OFFSET)%NOTE_COUNT;
 	
-	float wr;// = w*255-hilite*255*k;
-	float wg;// = w*255-hilite*255;
-	float wb;// = w*255+k*hilite*255;
+	GLfloat nr;// = w*255-hilite*255*k;
+	GLfloat ng;// = w*255-hilite*255;
+	GLfloat nb;// = w*255+k*hilite*255;
+    GLfloat na;
 	
-	if(isWhite)
+    if(NoteColors[n]==1)
 	{
-		wr = 255;
-		wg = 255;
-		wb = 255-hilite*255;
+		nr = WhiteButtonColors[0]+hilite*(WhiteButtonHilite[0]-WhiteButtonColors[0]);
+		ng = WhiteButtonColors[1]+hilite*(WhiteButtonHilite[1]-WhiteButtonColors[1]);
+		nb = WhiteButtonColors[2]+hilite*(WhiteButtonHilite[2]-WhiteButtonColors[2]);
+		na = WhiteButtonColors[3]+hilite*(WhiteButtonHilite[3]-WhiteButtonColors[3]);
 	}
 	else
 	{
-		wr = 0;
-		wg = 0;
-		wb = hilite*255;
+		nr = BlackButtonColors[0]+hilite*(BlackButtonHilite[0]-BlackButtonColors[0]);
+		ng = BlackButtonColors[1]+hilite*(BlackButtonHilite[1]-BlackButtonColors[1]);
+		nb = BlackButtonColors[2]+hilite*(BlackButtonHilite[2]-BlackButtonColors[2]);
+		na = BlackButtonColors[3]+hilite*(BlackButtonHilite[3]-BlackButtonColors[3]);
 	}
-		
+
 	Vertices2Clear();
 
-	Vertices2Insert(l,t,wr,wg,wb,255);
-	Vertices2Insert(r,t,wr,wg,wb,255);
-	Vertices2Insert(l,b,wr*0.5,wg*0.5,wb*0.5,255);
-	Vertices2Insert(r,b,wr*0.25,wg*0.25,wb*0.25,255);
+	Vertices2Insert(l,t,nr,ng,nb,na);
+	Vertices2Insert(r,t,nr,ng,nb,na);
+	Vertices2Insert(l,b,nr*kButtonLBFactor,ng*kButtonLBFactor,nb*kButtonLBFactor,na);
+	Vertices2Insert(r,b,nr*kButtonRBFactor,ng*kButtonRBFactor,nb*kButtonRBFactor,na);
 	
 	Vertices2Render(GL_TRIANGLE_STRIP);
 }
 
 void MicroRedButtonRender(int i,int j,float hilite)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
+	GLfloat f = 1.0/SPLIT_COUNT;
 	GLfloat l = 2*((i-0.1)*f-0.5);
 	GLfloat r = 2*((i+0.1)*f-0.5);
 	GLfloat t = 2*((j+0.5+0.1)*f-0.5);
 	GLfloat b = 2*((j+0.5-0.1)*f-0.5);
-	GLfloat h = 255*hilite;
-	GLfloat cr = 255;
-	GLfloat cg = 0;
-	GLfloat cb = 0;
+	GLfloat cr = MicroButtonColors[0];
+	GLfloat cg = MicroButtonColors[1];
+	GLfloat cb = MicroButtonColors[2];
+	GLfloat h  = MicroButtonColors[3]*hilite;
 	Vertices2Clear();
 	Vertices2Insert(l,t,cr,cg,cb,h);
 	Vertices2Insert(r,t,cr,cg,cb,h);
@@ -987,12 +1075,12 @@ void MicroRedButtonRender(int i,int j,float hilite)
 
 void NoteNameRenderA(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1006,12 +1094,12 @@ void NoteNameRenderA(float i,float j,int c)
 
 void NoteNameRenderB(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1028,12 +1116,12 @@ void NoteNameRenderB(float i,float j,int c)
 
 void NoteNameRenderC(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1047,12 +1135,12 @@ void NoteNameRenderC(float i,float j,int c)
 
 void NoteNameRenderD(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1067,12 +1155,12 @@ void NoteNameRenderD(float i,float j,int c)
 
 void NoteNameRenderE(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1091,12 +1179,12 @@ void NoteNameRenderE(float i,float j,int c)
 
 void NoteNameRenderF(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1112,12 +1200,12 @@ void NoteNameRenderF(float i,float j,int c)
 
 void NoteNameRenderG(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1133,12 +1221,12 @@ void NoteNameRenderG(float i,float j,int c)
 
 void NoteNameRenderH(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1154,12 +1242,12 @@ void NoteNameRenderH(float i,float j,int c)
 
 void NoteNameRenderI(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1175,12 +1263,12 @@ void NoteNameRenderI(float i,float j,int c)
 
 void NoteNameRenderJ(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1195,12 +1283,12 @@ void NoteNameRenderJ(float i,float j,int c)
 
 void NoteNameRenderK(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1216,12 +1304,12 @@ void NoteNameRenderK(float i,float j,int c)
 
 void NoteNameRenderL(float i,float j,int c)
 {
-	GLfloat f = 1.0/SPLITCOUNT;
-	GLfloat l = 2*((i-NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat r = 2*((i+NOTEFONTSIZE+0.5)*f-0.5);
-	GLfloat t = 2*((j+0.5+NOTEFONTSIZE)*f-0.5);
-	GLfloat b = 2*((j+0.5-NOTEFONTSIZE)*f-0.5);
-	GLfloat h = 255*NOTEFONTTRANSPARENCY;
+	GLfloat f = 1.0/SPLIT_COUNT;
+	GLfloat l = 2*((i-NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat r = 2*((i+NOTEFONT_SIZE+0.5)*f-0.5);
+	GLfloat t = 2*((j+0.5+NOTEFONT_SIZE)*f-0.5);
+	GLfloat b = 2*((j+0.5-NOTEFONT_SIZE)*f-0.5);
+	GLfloat h = 255*NOTEFONT_TRANSPARENCY;
 	GLfloat cr = c;
 	GLfloat cg = c;
 	GLfloat cb = c;
@@ -1234,12 +1322,12 @@ void NoteNameRenderL(float i,float j,int c)
 
 void ButtonsRender()
 {
-	for(unsigned int j=0;j<SPLITCOUNT;j++)
+	for(unsigned int j=0;j<SPLIT_COUNT;j++)
 	{
-		for(unsigned int i=0;i<SPLITCOUNT;i++)
+		for(unsigned int i=0;i<SPLIT_COUNT;i++)
 		{
-			ButtonRender(i,j,NoteStates[(5*j+i)%12]);
-			switch( (5*j+i+9)%12 )
+			ButtonRender(i,j,NoteStates[(VERTICAL_STEP_SIZE*j+i)%NOTE_COUNT]);
+			switch( (VERTICAL_STEP_SIZE*j+i-NOTE_OFFSET)%NOTE_COUNT )
 			{
 				case 0:
 					NoteNameRenderA(i,j,0);
@@ -1261,6 +1349,9 @@ void ButtonsRender()
 					break;
 				case 10:
 					NoteNameRenderG(i,j,0);
+					break;
+				case 12:
+					NoteNameRenderH(i,j,0);
 					break;
 			}
 		}
@@ -1314,44 +1405,62 @@ void PresetRender()
 
 void MicroButtonsRender()
 {
-	for(unsigned int j=0;j<SPLITCOUNT;j++)
+	for(unsigned int j=0;j<SPLIT_COUNT;j++)
 	{
 		//Note that we are over by 1
-		for(unsigned int i=0;i<SPLITCOUNT+1;i++)
+		for(unsigned int i=0;i<SPLIT_COUNT+1;i++)
 		{
-			MicroRedButtonRender(i,j,MicroStates[(5*j+i)%12]);
+			MicroRedButtonRender(i,j,MicroStates[(VERTICAL_STEP_SIZE*j+i)%NOTE_COUNT]);
 		}
 	}
 }
 
 void LinesRender()
 {
-	int r = 200;
-	int g = 200;
-	int b = 200;
-	if(susiNgPanalo != NULL)
-	{
-		r = 255;
-		g = 0;
-		b = 0;
-	}
-	if(SliderValues[SliderPreset][SL_FRET]<0.25)
-	{
-		r = 0;
-		g = 255;
-		b = 0;
-	}
-	if(SliderValues[SliderPreset][SL_FRET]>0.01)
-	{
+	if(SliderValues[SliderPreset][SL_FRET]>0.01) {
+        //pick colors
+        int fret_color_index = 0;
+        if(susiNgPanalo != NULL)
+            fret_color_index = 1;
+        if(SliderValues[SliderPreset][SL_FRET]<0.25)
+            fret_color_index = 2;
+        GLfloat r = FretLineColorsRGBA[fret_color_index][0];
+        GLfloat g = FretLineColorsRGBA[fret_color_index][1];
+        GLfloat b = FretLineColorsRGBA[fret_color_index][2];
+        GLfloat a = FretLineColorsRGBA[fret_color_index][3];
+        
+        //render
 		Vertices2Clear();
-		for(unsigned int i=0;i<SPLITCOUNT;i++)
+		for(unsigned int i=0;i<SPLIT_COUNT;i++)
 		{
-			float v = -1 + i*2.0/SPLITCOUNT;
-			Vertices2Insert(v,-1,r,g,b,255);
-			Vertices2Insert(v,1,r,g,b,255);
+			GLfloat v = -1 + i*2.0/SPLIT_COUNT;
+			Vertices2Insert(v,-1,r,g,b,a);
+			Vertices2Insert(v, 1,r,g,b,a);
 		}
 		Vertices2Render(GL_LINES);
 	}
+}
+
+void TracksRender()
+{
+    //pick colors
+    int fret_color_index = 0;
+    if(susiNgPanalo != NULL)
+        fret_color_index = 1;
+    GLfloat r = TrackLineColorsRGBA[fret_color_index][0];
+    GLfloat g = TrackLineColorsRGBA[fret_color_index][1];
+    GLfloat b = TrackLineColorsRGBA[fret_color_index][2];
+    GLfloat a = TrackLineColorsRGBA[fret_color_index][3];
+    
+    //render
+    Vertices2Clear();
+    for(unsigned int i=0;i<SPLIT_COUNT;i++)
+    {
+        GLfloat v = -1 + i*2.0/SPLIT_COUNT;
+        Vertices2Insert(-1,v,r,g,b,a);
+        Vertices2Insert(1,v,r,g,b,a);
+    }
+    Vertices2Render(GL_LINES);
 }
 
 static const GLfloat vertices[4][3] = {
@@ -1419,31 +1528,53 @@ void ControlLockRenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b,GLfloat scale
 	GLfloat cr = 255;
 	GLfloat cg = 255;
 	GLfloat cb = 255;
+
+    //draw padlock body
 	Vertices2Clear();
-	Vertices2Insert(hmid-rad,vmid+rad,cr,cg,cb,h);
-	Vertices2Insert(hmid+rad,vmid+rad,cr,cg,cb,h);
-	Vertices2Insert(hmid+rad,vmid-rad,cr,cg,cb,h);
-	Vertices2Insert(hmid-rad,vmid-rad,cr,cg,cb,h);
-	Vertices2Insert(hmid-rad,vmid+rad,cr,cg,cb,h);
-	Vertices2Insert(hmid-rad + rad/2,vmid+rad,cr,cg,cb,h);
-	Vertices2Insert(hmid-rad + rad/2,vmid+rad + rad,cr,cg,cb,h);
-	
-	Vertices2Insert(hmid-rad + rad/2 + rad/4,vmid+rad + rad + rad/4,cr,cg,cb,h);
-	Vertices2Insert(hmid+rad - rad/2 - rad/4,vmid+rad + rad + rad/4,cr,cg,cb,h);
-	
-	Vertices2Insert(hmid+rad - rad/2,vmid+rad + rad,cr,cg,cb,h);
-	Vertices2Insert(hmid+rad - rad/2,vmid+rad,cr,cg,cb,h);
-	Vertices2Render(GL_LINE_STRIP);
-	
-	if((tickCounter % 128) < 64 && SliderValues[SliderPreset][SL_LOCK] >= 0.5)
+    Vertices2Insert(hmid-rad,vmid+rad,cr,cg,cb,h);
+    Vertices2Insert(hmid+rad,vmid+rad,cr,cg,cb,h);
+    Vertices2Insert(hmid+rad,vmid-rad,cr,cg,cb,h);
+    Vertices2Insert(hmid-rad,vmid-rad,cr,cg,cb,h);
+    Vertices2Insert(hmid-rad,vmid+rad,cr,cg,cb,h);
+    Vertices2Render(GL_LINE_STRIP);
+    if(SliderValues[SliderPreset][SL_LOCK] >= SL_LOCK_THRESHOLD)
+    {
+        // draw locked
+        Vertices2Clear();
+        Vertices2Insert(hmid-rad + rad/2,vmid+rad,cr,cg,cb,h);
+        Vertices2Insert(hmid-rad + rad/2,vmid+rad + rad,cr,cg,cb,h);
+        
+        Vertices2Insert(hmid-rad + rad/2 + rad/4,vmid+rad + rad + rad/4,cr,cg,cb,h);
+        Vertices2Insert(hmid+rad - rad/2 - rad/4,vmid+rad + rad + rad/4,cr,cg,cb,h);
+        
+        Vertices2Insert(hmid+rad - rad/2,vmid+rad + rad,cr,cg,cb,h);
+        Vertices2Insert(hmid+rad - rad/2,vmid+rad,cr,cg,cb,h);
+        Vertices2Render(GL_LINE_STRIP);
+	}
+    else
+    {
+        // draw unlocked (adds rad/2 to the height)
+        Vertices2Clear();
+        Vertices2Insert(hmid-rad + rad/2,vmid+rad +rad/2,cr,cg,cb,h);
+        Vertices2Insert(hmid-rad + rad/2,vmid+rad + rad+rad/2,cr,cg,cb,h);
+        
+        Vertices2Insert(hmid-rad + rad/2 + rad/4,vmid+rad + rad +rad/2+ rad/4,cr,cg,cb,h);
+        Vertices2Insert(hmid+rad - rad/2 - rad/4,vmid+rad + rad +rad/2+ rad/4,cr,cg,cb,h);
+        
+        Vertices2Insert(hmid+rad - rad/2,vmid+rad + rad+rad/2,cr,cg,cb,h);
+        Vertices2Insert(hmid+rad - rad/2,vmid+rad,cr,cg,cb,h);
+        Vertices2Render(GL_LINE_STRIP);
+    }
+	if((tickCounter % 128) < 64 && SliderValues[SliderPreset][SL_LOCK] >= SL_LOCK_THRESHOLD)
 	{
+        //draw blinking x
 		Vertices2Clear();
-		Vertices2Insert(hmid-rad/2,vmid-rad/2,255,0,0,h);
-		Vertices2Insert(hmid+rad/2,vmid+rad/2,255,0,0,h);
+		Vertices2Insert(hmid-rad/2,vmid-rad/2,PadlockXColorRGB[0],PadlockXColorRGB[1],PadlockXColorRGB[2],h);
+		Vertices2Insert(hmid+rad/2,vmid+rad/2,PadlockXColorRGB[0],PadlockXColorRGB[1],PadlockXColorRGB[2],h);
 		Vertices2Render(GL_LINE_STRIP);
 		Vertices2Clear();
-		Vertices2Insert(hmid+rad/2,vmid-rad/2,255,0,0,h);
-		Vertices2Insert(hmid-rad/2,vmid+rad/2,255,0,0,h);
+		Vertices2Insert(hmid+rad/2,vmid-rad/2,PadlockXColorRGB[0],PadlockXColorRGB[1],PadlockXColorRGB[2],h);
+		Vertices2Insert(hmid-rad/2,vmid+rad/2,PadlockXColorRGB[0],PadlockXColorRGB[1],PadlockXColorRGB[2],h);
 		Vertices2Render(GL_LINE_STRIP);
 	}
 }
@@ -1477,8 +1608,8 @@ void ControlPresetRenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b,GLfloat sca
 {
 	GLfloat v = (2*t+b)/3;
 	//GLfloat a = (t-b);
-	GLfloat n = 12;
-	float invN = 1.0/12;
+	GLfloat n = NUM_PRESETS;
+	float invN = 1.0/NUM_PRESETS;
 	Vertices2Clear();
 	for(unsigned int i=0; i<n; i++)
 	{
@@ -1536,60 +1667,63 @@ void DrawNote(float x,float y)
 	Vertices2Insert(x-d,y-6*d,255,255, 255,255);
 }
 
+void DrawPolyButton(float x, float y, bool active)
+{
+	float d = 0.008;
+    float t = (active?255:64); //note transparency
+	Vertices2Clear();
+	Vertices2Insert(x-d,y+d,255,255, 255,t);
+	Vertices2Insert(x+d,y+d,255,255, 255,t);
+	Vertices2Insert(x-d,y-d,255,255, 255,t);
+	Vertices2Insert(x+d,y-d,255,255, 255,t);    
+	Vertices2Render(GL_TRIANGLE_STRIP);	    
+}
+
 void ControlPolyRenderSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b,GLfloat scale,unsigned int slider)
 {
 	GLfloat v = (2*t+b)/3;
+    GLfloat div_height = 0.04;
 	Vertices2Clear();
-	//25% line
+	//33% line
 	Vertices2Insert(
-					l+(r-l)*0.25,
-					v -0.02, 
+					l+(r-l)*SL_POLY_1_THRESHOLD,
+					v -div_height, 
 					255,255, 255, 
 					255
 					);
 	Vertices2Insert(
-					l+(r-l)*0.25,
-					v +0.02, 
+					l+(r-l)*SL_POLY_1_THRESHOLD,
+					v +div_height, 
 					255,255, 255, 
 					255
 					);
-	Vertices2Insert(l+(r-l)*0.25,v +0.02,255,255, 255,0);
-	Vertices2Insert(l+(r-l)*0.75,v -0.02,255,255, 255,0);
-	//75% line
+	Vertices2Insert(l+(r-l)*SL_POLY_1_THRESHOLD,v +0.02,255,255, 255,0);
+	Vertices2Insert(l+(r-l)*SL_POLY_2_THRESHOLD,v -0.02,255,255, 255,0);
+	//66% line
 	Vertices2Insert(
-					l+(r-l)*0.75,
-					v -0.02, 
+					l+(r-l)*SL_POLY_2_THRESHOLD,
+					v -div_height, 
 					255,255, 255, 
 					255
 					);
 	Vertices2Insert(
-					l+(r-l)*0.75,
-					v +0.02, 
+					l+(r-l)*SL_POLY_2_THRESHOLD,
+					v +div_height, 
 					255,255, 255, 
 					255
 					);
-	Vertices2Insert(l+(r-l)*0.75,v +0.02,255,255, 255,0);
-	
-	DrawNote(l+(r-l)*0.125, v);
-	Vertices2Insert(l+(r-l)*0.125,v,255,255, 255,0);
-	
-	DrawNote(l+(r-l)*0.5, v-0.01);
-	Vertices2Insert(l+(r-l)*0.5,v-0.01,255,255, 255,0);
-	
-	DrawNote(l+(r-l)*0.5, v+0.02);
-	Vertices2Insert(l+(r-l)*0.5, v+0.02,255,255,255,0);
-
-	DrawNote(l+(r-l)*(1-0.125), v+0.02);
-	Vertices2Insert(l+(r-l)*(1-0.125), v+0.02,255,255,255,0);
-
-	DrawNote(l+(r-l)*(1-0.125), v);
-	Vertices2Insert(l+(r-l)*(1-0.125), v,255,255,255,0);
-	
-	DrawNote(l+(r-l)*(1-0.125), v-0.02);
-	Vertices2Insert(l+(r-l)*(1-0.125), v-0.02,255,255,255,0);
-	
 	Vertices2Render(GL_LINE_STRIP);
+	Vertices2Clear();
+    Vertices2Insert(l+(r-l)*0.0,v,255,255, 255,255);
+    Vertices2Insert(l+(r-l)*1.0,v,255,255, 255,255);
+    Vertices2Render(GL_LINE_STRIP);
 	
+    bool isMultiString = SliderValues[SliderPreset][SL_POLY] >= SL_POLY_1_THRESHOLD;
+    bool isFullPoly    = SliderValues[SliderPreset][SL_POLY] >= SL_POLY_2_THRESHOLD;
+
+	DrawPolyButton(l+(r-l)*0.167, v-0.02, true);           // always at lest solo voice
+	DrawPolyButton(l+(r-l)*0.5,   v+0.021, isMultiString); // show if multi-string is active
+	DrawPolyButton(l+(r-l)*0.833, v-0.02, isFullPoly);     // show if full polyphony is active
 	
 }
 
@@ -1735,7 +1869,7 @@ void ControlDistortionSkin(GLfloat l,GLfloat r,GLfloat t,GLfloat b)
 					
 void ControlRender()
 {
-	GLfloat t = -1 + 2.0/SPLITCOUNT;
+	GLfloat t = -1 + 2.0/SPLIT_COUNT;
 	GLfloat b = -1;
 	GLfloat a = (t-b);
 	
@@ -1743,77 +1877,20 @@ void ControlRender()
 	
 	GLfloat begin = -1;
 	GLfloat end = 1;
-	for(unsigned int slider=0; slider < SLIDERCOUNT; slider++)
+	for(unsigned int slider=0; slider < SLIDER_COUNT; slider++)
 	{
-		GLfloat sl = begin + slider * (end-begin) / SLIDERCOUNT;
-		GLfloat sr = begin + (slider+1) * (end-begin) / SLIDERCOUNT;
-		GLfloat sv = sl + SliderValues[SliderPreset][slider]*(sr-sl);
+		GLfloat sl = begin + slider * (end-begin) / SLIDER_COUNT;       //  left border of slider
+		GLfloat sr = begin + (slider+1) * (end-begin) / SLIDER_COUNT;   // right border of slider
+		GLfloat sv = sl + SliderValues[SliderPreset][slider]*(sr-sl);   // location of slider value
 		
 		GLfloat cr = 0;
 		GLfloat cg = 0;
 		GLfloat cb = 0;
-		if(slider==0)
-		{
-			cg = 255;
-		}
-		if(slider==1)
-		{
-			cb = 255;
-		}
-		if(slider==2)
-		{
-			cr = 255;
-		}
-		if(slider==3)
-		{
-			cr = 200;
-			cb = 200;
-		}
-		if(slider==4)
-		{
-			cr = 200;
-			cb = 200;
-		}
-		if(slider==5)
-		{
-			cb = 200;
-			cg = 100;
-		}
-		if(slider==6)
-		{
-			cb = 200;
-			cg = 100;
-		}
-		if(slider==7)
-		{
-			cb = 200;
-			cg = 100;
-		}
-		if(slider==8)
-		{
-			cr = 200;
-			cg = 200;
-			cb = 200;
-		}
-		if(slider==9)
-		{
-			cr = 200;
-			cg = 200;
-			cb = 0;
-		}
-		if(slider==10)
-		{
-			cr = 100;
-			cg = 100;
-			cb = 200;
-		}
-		if(slider==11)
-		{
-			cr = 100;
-			cg = 100;
-			cb = 200;
-		}
-		
+        
+        cr = SliderColors[slider][0];
+        cg = SliderColors[slider][1];
+        cb = SliderColors[slider][2];
+
 		int isLocked = (SliderValues[SliderPreset][SL_LOCK] > 0.5);
 		if(isLocked && slider < 10)
 		{
@@ -1856,7 +1933,7 @@ void ControlRender()
 			case SL_FRET: ControlSnapRenderSkin(sl,sr,t,b,1.0,7); break;
 			case SL_POLY: ControlPolyRenderSkin(sl,sr,t,b,1.0,7); break;
 			case SL_PRESET: ControlPresetRenderSkin(sl,sr,t,b,1.0,7); break;
-			case SL_LOCK: ControlLockRenderSkin(sl,sr,t,b,1.0,7); break; //TODO: padlock
+			case SL_LOCK: ControlLockRenderSkin(sl,sr,t,b,1.0,7); break;
 			//default:
 				//TODO
 		}
@@ -1870,11 +1947,11 @@ void ControlRender()
 void FingerControl(unsigned int touchIndex, float i,float j)
 {
 	//Slidercontrol spans 5 slots
-	float sliderf = 1.0*SLIDERCOUNT*i/NOTECOUNT;
+	float sliderf = 1.0*SLIDER_COUNT*i/SLIDER_COUNT;
 	//int slider = (int)sliderf;
 	int slider = currentControl;
 	float v = sliderf - slider;
-	if(v<0)
+	if(v < 0.0)
 	{
 		v = 0.0;
 	}
@@ -1895,38 +1972,82 @@ void FingerRenderLines(CGPoint p,unsigned int touchIndex)
 	GLfloat y = (0.5-py*inverseBackingHeight)*2;
 	
 	Vertices2Clear();	
-	GLfloat d = 1.25/SPLITCOUNT;
+	GLfloat d = 1.25/SPLIT_COUNT;
 	GLfloat l = d - x;
 	GLfloat t = d + y;
 	GLfloat r = -d - x;
 	GLfloat b = -d + y;
-	float rd = 255;
+/*	float rd = 255;
 	float gr = 255;
-	float bl = 255;
-	rd = touchIsMaxNote[touchIndex] ? 0 : 255;
-	   
-	Vertices2Insert(l,(t+b)/2, rd, gr, bl, 150);
-	Vertices2Insert(r,(t+b)/2, rd,gr, bl, 150);
-	Vertices2Insert((l+r)/2,t, rd,gr, bl, 150);
-	Vertices2Insert((l+r)/2,b, rd,gr, bl, 150);
+	float bl = 255;*/
+	//rd = touchIsMaxNote[touchIndex] ? 0 : 255;
+/*	   
+	Vertices2Insert(l,(t+b)/2, rd, gr, bl, FINGER_A);
+	Vertices2Insert(r,(t+b)/2, rd, gr, bl, FINGER_A);
+	Vertices2Insert((l+r)/2,t, rd, gr, bl, FINGER_A);
+	Vertices2Insert((l+r)/2,b, rd, gr, bl, FINGER_A);
 	Vertices2Render(GL_LINES);
+*/
+	float j = SPLIT_COUNT-(1.0*SPLIT_COUNT * py)*inverseBackingHeight;
+    float i = (SPLIT_COUNT * p.x)*inverseBackingWidth;
+	GLfloat flat = 127 + 127 * cosf((i)*2*M_PI);     //255*(i-((int)(i+0.5)));
+	GLfloat sharp = 127 + 127 * cosf((i+0.5)*2*M_PI);//*(((int)(i))-i);
+	GLfloat harm = 127 + 127 * cosf((j)*2*M_PI);     //*(((int)(i))-i);
+
+	Vertices2Insert(l,(t+b)/2, flat, sharp, harm, FINGER_A);
+	Vertices2Insert(r,(t+b)/2, flat, sharp, harm, FINGER_A);
+	Vertices2Insert((l+r)/2,t, flat, sharp, harm, FINGER_A);
+	Vertices2Insert((l+r)/2,b, flat, sharp, harm, FINGER_A);
+	Vertices2Render(GL_LINES);
+
 }
 
-void FingerRenderRaw2(float i,float j,GLfloat x,GLfloat y,CGFloat px,CGFloat py)
+void FingerRenderRaw2(float i,float j,GLfloat x,GLfloat y,CGFloat cx,CGFloat cy, CGFloat px,CGFloat py, bool cActive, bool pActive)
 {
 	
-	GLfloat d = 1.0/SPLITCOUNT;
-	GLfloat l = d - x;
-	GLfloat t = d + y;
+	GLfloat d = 1.0/SPLIT_COUNT;
+	GLfloat l =  d - x;
+	GLfloat t =  d + y;
 	GLfloat r = -d - x;
 	GLfloat b = -d + y;
-	GLfloat flat = 127 + 127 * cosf((i)*2*M_PI);//255*(i-((int)(i+0.5)));
-	GLfloat sharp = 127 + 127 * cosf((i+0.5)*2*M_PI);//*(((int)(i))-i);
-	GLfloat harm = 127 + 127 * cosf((j)*2*M_PI);//*(((int)(i))-i);
-	Vertices2Insert(l,t, flat, sharp, harm, 150);
-	Vertices2Insert(r,t, flat,sharp, harm, 150);
-	Vertices2Insert(l,b, flat,sharp, harm, 150);
-	Vertices2Insert(r,b, flat,sharp, harm, 150);
+//	GLfloat flat  = 127 + 127 * cosf((i)*2*M_PI);     //255*(i-((int)(i+0.5)));
+//	GLfloat sharp = 127 + 127 * cosf((i+0.5)*2*M_PI); //*(((int)(i))-i);
+//	GLfloat harm  = 127 + 127 * cosf((j)*2*M_PI);     //*(((int)(i))-i);
+    GLfloat c_flat  = 255.0*cActive;
+    GLfloat c_sharp = 255.0*cActive;
+    GLfloat c_harm  = 255.0*cActive;
+    GLfloat p_flat  = 255.0*pActive;
+    GLfloat p_sharp = 255.0*pActive;
+    GLfloat p_harm  = 255.0*pActive;
+//	Vertices2Insert(l,t, flat, sharp, harm, FINGER_A);
+//	Vertices2Insert(r,t, flat, sharp, harm, FINGER_A);
+//	Vertices2Insert(l,b, flat, sharp, harm, FINGER_A);
+//	Vertices2Insert(r,b, flat, sharp, harm, FINGER_A);
+    //if the previous point is off in slider land, then use current point instead;
+    if ((SPLIT_COUNT-(1.0*SPLIT_COUNT * py)*inverseBackingHeight) <1)
+    {
+        px = cx;
+        py = cy;
+    }
+    GLfloat prx = (0.5-px*inverseBackingWidth)*-2.0;
+	GLfloat pry = (0.5-py*inverseBackingHeight)*2.0;
+
+    Vertices2Clear();
+	Vertices2Insert(l,t, c_flat, c_sharp, c_harm, FINGER_A/2.0);
+	Vertices2Insert(r,t, c_flat, c_sharp, c_harm, FINGER_A/2.0);
+	Vertices2Insert(l,b, c_flat, c_sharp, c_harm, FINGER_A/2.0);
+	Vertices2Insert(r,b, c_flat, c_sharp, c_harm, FINGER_A/2.0);
+	Vertices2Render(GL_TRIANGLE_STRIP);
+    Vertices2Clear();
+	Vertices2Insert(prx,pry, p_flat, p_sharp, p_harm, FINGER_A/4.0);
+	Vertices2Insert(l,t, c_flat, c_sharp, c_harm, FINGER_A/4.0);
+	Vertices2Insert(r,b, c_flat, c_sharp, c_harm, FINGER_A/4.0);
+	Vertices2Render(GL_TRIANGLE_STRIP);
+    Vertices2Clear();
+	Vertices2Insert(prx,pry, p_flat, p_sharp, p_harm, FINGER_A/4.0);
+	Vertices2Insert(r,t, c_flat, c_sharp, c_harm, FINGER_A/4.0);
+	Vertices2Insert(l,b, c_flat, c_sharp, c_harm, FINGER_A/4.0);
+	Vertices2Render(GL_TRIANGLE_STRIP);
 }
 
 void AdjustmentCheck()
@@ -1999,7 +2120,7 @@ void TempoTrack()
 	//Can only tap if unlocked!
 	if(currentControl == SL_ECHOPERIOD)
 	{
-		if(SliderValues[SliderPreset][SL_LOCK] < 0.5)
+		if(SliderValues[SliderPreset][SL_LOCK] < SL_LOCK_THRESHOLD)
 		{
 			for(unsigned int touchIndex=0; touchIndex < FINGERS; touchIndex++)
 			{
@@ -2012,7 +2133,7 @@ void TempoTrack()
 							timeTapStart = totalSamples;
 							if(diff < ECHOSIZE)
 							{
-								SliderValues[SliderPreset][5] = (1.0 * diff)/ECHOSIZE;
+								SliderValues[SliderPreset][SL_ECHOPERIOD] = (1.0 * diff)/ECHOSIZE;
 								SyncWithPreset(SliderPreset);
 							}
 						}
@@ -2023,30 +2144,33 @@ void TempoTrack()
 	}
 }
 
-void FingerRenderRaw(CGPoint p,unsigned int touchIndex)
+void FingerRenderRaw(CGPoint p, CGPoint c, unsigned int touchIndex, unsigned int lastTouchIndex)
 {
-	CGFloat px=p.x+SnapAdjustH[touchIndex];
+    if (FindTouchByIndex(lastTouchIndex)==NULL)
+    {
+        p = c;
+    }
+	CGFloat px=p.x;
 	CGFloat py=p.y;
-	GLfloat x = (0.5-px*inverseBackingWidth)*2;
-	GLfloat y = (0.5-py*inverseBackingHeight)*2;
-	float jfl = SPLITCOUNT-(1.0*SPLITCOUNT * py)*inverseBackingHeight;
+	CGFloat cx=c.x+SnapAdjustH[touchIndex];
+	CGFloat cy=c.y;
+	GLfloat x = (0.5-cx*inverseBackingWidth)*2;
+	GLfloat y = (0.5-cy*inverseBackingHeight)*2;
+	float jfl = SPLIT_COUNT-(1.0*SPLIT_COUNT * cy)*inverseBackingHeight;
 	float j = (int)jfl;
 	if(j<1)
 	{
-		if(touchIndex >= 0)
-		{
-			UITouchPhase phase = FindPhaseByIndex(touchIndex);
-			if(phase==UITouchPhaseMoved)
-			{
-				float i = (SPLITCOUNT * p.x)*inverseBackingWidth;
-				FingerControl(touchIndex,i,jfl);
-			}	
-		}
+        UITouchPhase phase = FindPhaseByIndex(touchIndex);
+        if(phase==UITouchPhaseMoved)
+        {
+            float i = (SLIDER_COUNT * c.x)*inverseBackingWidth;
+            FingerControl(touchIndex,i,jfl);
+        }	
 	}
 	else 
 	{
-		float i = (SPLITCOUNT * px)*inverseBackingWidth;
-		FingerRenderRaw2(i,jfl,x,y,px,py);
+		float i = (SPLIT_COUNT * cx)*inverseBackingWidth;
+		FingerRenderRaw2(i,jfl,x,y,cx,cy,px, py, touchIsMaxNote[touchIndex], touchIsMaxNote[lastTouchIndex]);
 	}
 }
 
@@ -2065,16 +2189,42 @@ void FingersRenderAllLines()
 
 void FingersRender(bool fresh)
 {
-	Vertices2Clear();
+    unsigned int lastTouchIndex = FINGERS-1;
+    CGPoint lastPoint = FindPointByIndex(lastTouchIndex);
+
 	for(unsigned int touchIndex=0; touchIndex < FINGERS; touchIndex++)
 	{
 		UITouch* touch = FindTouchByIndex(touchIndex);
 		if(touch != NULL)
 		{
-			CGPoint lastPoint = FindPointByIndex(touchIndex);
-			FingerRenderRaw(lastPoint,touchIndex);
+            CGPoint currentPoint = FindPointByIndex(touchIndex);
+			
+            FingerRenderRaw(lastPoint, currentPoint, touchIndex, lastTouchIndex);
+            lastPoint = currentPoint;
 		}
 	}
+}
+
+void GradientRender(void)
+{
+    Vertices2Clear();
+    GLfloat l = -1.0;
+    GLfloat r =  1.0;
+    GLfloat t =  1.0;
+    GLfloat m =  1.0/SPLIT_COUNT;
+    GLfloat b = -1.0*(SPLIT_COUNT-2)/SPLIT_COUNT;
+    GLfloat cr = GradientColors[0];
+    GLfloat cg = GradientColors[1];
+    GLfloat cb = GradientColors[2];
+    GLfloat ca = GradientColors[4];
+    Vertices2Insert(l,t,cr*GRADIENT_FADE,cg*GRADIENT_FADE,cb*GRADIENT_FADE,ca);
+	Vertices2Insert(r,t,cr,cg,cb,ca);
+	Vertices2Insert(l,m,cr,cg,cb,ca);
+	Vertices2Insert(r,m,cr,cg,cb,ca);
+	Vertices2Insert(l,m,cr,cg,cb,ca);
+	Vertices2Insert(r,m,cr,cg,cb,ca);
+	Vertices2Insert(l,b,cr,cg,cb,ca);
+	Vertices2Insert(r,b,cr*GRADIENT_FADE,cg*GRADIENT_FADE,cb*GRADIENT_FADE,ca);	
 	Vertices2Render(GL_TRIANGLE_STRIP);
 }
 
@@ -2138,9 +2288,11 @@ void FingersRender(bool fresh)
 	glViewport(0, 0, backingWidth,backingHeight);
 	
 	glUseProgram(program);
+    GradientRender();
 	ButtonsRender();
-	MicroButtonsRender();	
+    TracksRender();
 	LinesRender();
+	MicroButtonsRender();	
 	ControlRender();
 	FingersRender(true);
 	FingersRenderAllLines();
