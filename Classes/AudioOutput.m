@@ -7,23 +7,25 @@
 @implementation AudioOutput
 
 
-#define UPPERLIMIT (214748367-10)
-#define LPFAMT 0.5
+//#define UPPERLIMIT (214748367-10)
+#define MAX_AUDIO_VALUE (1<<24)
+#define OVERALL_GAIN 4.0
+//#define LPFAMT 0.5
 //.75
 //.75
 
 //static unsigned int reverb_size = REVERBSIZE;
 static float gainp=0.5;
-static float reverbp=0.5;
+static float reverbp=0.0;
 static float reverbpTarget=0.5;
-static float masterp=0.5;
+static float masterp=0.0;
 static float masterpTarget=0.5;
-static float powerp=0.5;
+static float powerp=0.0;
 static float powerpTarget=0.5;
 static float currentFM1=0.5;
 static float targetFM1=0.5;
 static float delayFeedback=0.5;
-static float delayVolume=0.5;
+static float delayVolume=0.0;
 static float delayVolumeTarget=0.5;
 
 static const float kSampleRate = 44100.0;
@@ -56,7 +58,8 @@ static BOOL soundEnginePaused = NO;
 
 static inline SInt32 limiter(float x)
 {
-	return UPPERLIMIT*atanf(x)/(M_PI/2);
+//	return UPPERLIMIT*atanf(x)/(M_PI/2);
+    return 2.0* MAX_AUDIO_VALUE *atanf(x)/M_PI;
 }
 
 static OSStatus fixGDLatency()
@@ -249,7 +252,7 @@ static inline void makeNoisePerFinger(SInt32* dataL,SInt32* dataR,unsigned int s
 			
 			float total = 0;			
 			float fm = volf*M_PI*currentFM1*sinFast(a*2);
-			total += volf*sinFast( fm+a ) * harmBaseFactor;
+			total += volf*sinFast( fm+a   ) * harmBaseFactor;
 			total += volf*sinFast( fm+2*a ) * harmUpFactor;					
 			total += volf*sinFast( fm+a/2 ) * harmDownFactor;
 			
@@ -261,15 +264,15 @@ static inline void makeNoisePerFinger(SInt32* dataL,SInt32* dataR,unsigned int s
 			//lastTotal[finger] = total;
 			
 			volf   = vrate*volf + (1-vrate)*volt; 
-			harmf   = 0.995*harmf   + 0.005*harmt;
-			panf   = 0.99995*panf    + 0.00005*pant;
+			harmf  = 0.995*harmf   + 0.005*harmt;
+			panf   = 0.99995*panf  + 0.00005*pant;
 			pitchf = 0.995*pitchf  + 0.005*pitcht;		
 		}
 		
 		angle[finger] += pitchf;
-		if(angle[finger] > 2000*M_PI)
+		while (angle[finger] > 2048*M_PI)
 		{
-			angle[finger] -= 2000*M_PI;
+			angle[finger] -= 2048*M_PI;
 		}
 		
 		//None of these moves should take more than 1024 samples
@@ -292,14 +295,16 @@ static inline void makeNoisePostProcessing(SInt32* dataL,SInt32* dataR,unsigned 
 	//If reverb is low, then turn it off for performance (ie: external recording)
 	for (unsigned int i = 0; i < samples; ++i) 
 	{
-		unsigned int rBufferIndex = (i+totalSamples)%REVERBSIZE;
+		unsigned int rBufferIndex  = (i+totalSamples)%REVERBSIZE;
 		unsigned int rBufferIndex2 = (i+totalSamples+1)%REVERBSIZE;
-		unsigned int eBufferIndex = (i+totalSamples)%stride;
+		unsigned int eBufferIndex  = (i+totalSamples)%stride;
 		
 		float bL = bufferL[i];
 		float bR = bufferR[i];
-		float sL = (unG*bL+gainp*atanf(100*gainp*bL))/40;
-		float sR = (unG*bR+gainp*atanf(100*gainp*bR))/40;
+//		float sL = (unG*bL+gainp*atanf(100*gainp*bL))/40;
+//		float sR = (unG*bR+gainp*atanf(100*gainp*bR))/40;
+		float sL = (unG*bL*20+gainp*atanf(100*gainp*bL))/(20+20*unG);
+		float sR = (unG*bR*20+gainp*atanf(100*gainp*bR))/(20+20*unG);
 		float eL = 0;
 		float eR = 0;
 		float rL = 0;
@@ -323,11 +328,11 @@ static inline void makeNoisePostProcessing(SInt32* dataL,SInt32* dataR,unsigned 
 					* halfReverbp;
 			rR = (reverbBufferL[rBufferIndex] + reverbBufferL[rBufferIndex2])
 					* halfReverbp;
-			
+
 			reverbN(rBufferIndex,
 					sL*0.75 + bL*0.0125 + 0.25*eL + 0.111*rL,
 					sR*0.75 + bR*0.0125 + 0.25*eR + 0.111*rR
-					);
+            );
 			
 			reverbBufferL[rBufferIndex] =0;
 			reverbBufferR[rBufferIndex] =0;
@@ -335,15 +340,17 @@ static inline void makeNoisePostProcessing(SInt32* dataL,SInt32* dataR,unsigned 
 		
 		
 		dataL[i] = limiter(
-						   masterp*(sL + rL + eL)
+//						   masterp*(sL + rL + eL)
+						   masterp*OVERALL_GAIN*(sL + rL + eL)
 		);
 		dataR[i] = limiter(
-						   masterp*(sR + rR + eR)
+//						   masterp*(sR + rR + eR)
+						   masterp*OVERALL_GAIN*(sR + rR + eR)
 		);
 	}
 	
 	masterp = lp0*masterp + unLp0*masterpTarget;
-	powerp = lp0*powerp + unLp0*powerpTarget;
+	powerp  = lp0*powerp  + unLp0*powerpTarget;
 	reverbp = lp0*reverbp + unLp0*reverbpTarget;
 	delayVolume = lp0*delayVolume + unLp0*delayVolumeTarget;
 	
@@ -444,7 +451,7 @@ static OSStatus playCallback(void *inRefCon,
 											   sizeof (allowMixing), &allowMixing);
 	if (result)	
 	{
-		NSLog(@"ERROR enabling audio mixing: %d", result);
+		NSLog(@"ERROR enabling audio mixing: %ld", result);
 	}
 	
 	return YES;
@@ -550,7 +557,7 @@ static OSStatus playCallback(void *inRefCon,
   status = AudioComponentInstanceNew(outputComponent, &audioUnit);
   if(status)
   {
-	  NSLog(@"AudioComponentInstanceNew:%d",status);
+	  NSLog(@"AudioComponentInstanceNew:%ld",status);
   }
   else 
   {
@@ -564,7 +571,7 @@ static OSStatus playCallback(void *inRefCon,
 									sizeof(UInt32));
 	  if(status)
 	  {
-		  NSLog(@"AudioUnitSetProperty EnableIO:%d",status);
+		  NSLog(@"AudioUnitSetProperty EnableIO:%ld",status);
 	  }
 	  else 
 	  {
@@ -586,7 +593,7 @@ static OSStatus playCallback(void *inRefCon,
 										sizeof(AudioStreamBasicDescription));
 		  if(status)
 		  {
-			  NSLog(@"AudioUnitSetProperty StreamFormat:%d",status);
+			  NSLog(@"AudioUnitSetProperty StreamFormat:%ld",status);
 		  }
 		  else 
 		  {
@@ -611,21 +618,21 @@ static OSStatus playCallback(void *inRefCon,
 											sizeof(AURenderCallbackStruct));
 			  if(status)
 			  {
-				  NSLog(@"AudioUnitSetProperty SetRenderCallback:%d",status);
+				  NSLog(@"AudioUnitSetProperty SetRenderCallback:%ld",status);
 			  }
 			  else
 			  {
 				  status = AudioUnitInitialize(audioUnit);
 				  if(status)
 				  {
-					  NSLog(@"AudioUnitInitialize:%d",status);
+					  NSLog(@"AudioUnitInitialize:%ld",status);
 				  }
 				  else 
 				  {
 					  status = AudioOutputUnitStart(audioUnit);
 					  if(status)
 					  {
-						  NSLog(@"AudioUnitStart:%d",status);					  
+						  NSLog(@"AudioUnitStart:%ld",status);					  
 					  }
 				  }				  
 			  }
@@ -642,7 +649,7 @@ static OSStatus playCallback(void *inRefCon,
 
 - (void) setPan:(float)p forFinger:(unsigned int)f;
 {
-	if(0 <= f && f < FINGERS)
+	if(f < FINGERS)
 	{
 		targetPan[f] = (1-p);
 	}
@@ -650,7 +657,7 @@ static OSStatus playCallback(void *inRefCon,
 
 - (void) setNote:(float)p forFinger:(unsigned int)f isAttack:(unsigned int)a;
 {
-	if(0 <= f && f < FINGERS)
+	if(f < FINGERS)
 	{
 		targetPitch[f] = p;
 		attack[f] = a;
@@ -659,7 +666,7 @@ static OSStatus playCallback(void *inRefCon,
 
 - (void) setVol:(float)p forFinger:(unsigned int)f;
 {
-	if(0 <= f && f < FINGERS)
+	if(f < FINGERS)
 	{
 		targetVol[f] = p;
 	}
@@ -668,7 +675,7 @@ static OSStatus playCallback(void *inRefCon,
 //Set AFTER pitch is set
 - (void) setAttackVol:(float)p forFinger:(unsigned int)f;
 {
-	if(0 <= f && f < FINGERS)
+	if(f < FINGERS)
 	{
 		currentVol[f] = p;
 		pitch[f] = targetPitch[f];
@@ -678,7 +685,7 @@ static OSStatus playCallback(void *inRefCon,
 
 - (void) setHarmonics:(float)h forFinger:(unsigned int)f;
 {
-	if(0 <= f && f < FINGERS)
+	if(f < FINGERS)
 	{
 		targetHarmonicPercentage[f] = h;
 	}
