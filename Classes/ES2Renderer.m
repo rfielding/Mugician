@@ -2272,7 +2272,7 @@ void GradientRender(void)
 		[sound start];
 		ButtonsTrack();
 		
-		//	makeAdjustments();
+		makeAdjustments();
 		ReadPreferences();
     }
 	
